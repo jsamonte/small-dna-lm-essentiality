@@ -1,0 +1,5 @@
+model,params,loaded,embed_dim,tokens,sec_per_seq,deterministic,revision,error
+LongSafari/hyenadna-tiny-1k-seqlen-hf,438144,yes,128,501,0.0096,yes,e8c1effa8673814e257e627d2e1eda9ea5a373f6,
+LongSafari/hyenadna-tiny-1k-seqlen-d256-hf,1645184,yes,256,501,0.0181,yes,6036d4e144922b44470294f510cbfd2539ba3b7e,
+InstaDeepAI/nucleotide-transformer-v2-50m-multi-species,55904972,yes,512,86,0.0854,yes,81b29e5786726d891dbf929404ef20adca5b36f1,
+InstaDeepAI/nucleotide-transformer-v2-100m-multi-species,97889132,yes,512,86,0.1516,yes,f34324c6fde36a4f635f0f1f06cac5d25acd6798,

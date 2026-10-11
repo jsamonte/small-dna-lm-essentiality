@@ -1,0 +1,73 @@
+{
+  "model": "hyenadna-tiny",
+  "model_id": "LongSafari/hyenadna-tiny-1k-seqlen-hf",
+  "organism": "bsub",
+  "pooling": "mean",
+  "strategy": "chunk_mean",
+  "device": "cpu",
+  "n_genes": 4046,
+  "projected_seconds": 71.4,
+  "projected_minutes": 1.2,
+  "trial": [
+    {
+      "locus_tag": "BSU_40780",
+      "bp": 63,
+      "seconds": 0.006,
+      "dim": 128
+    },
+    {
+      "locus_tag": "BSU_20440",
+      "bp": 297,
+      "seconds": 0.0164,
+      "dim": 128
+    },
+    {
+      "locus_tag": "BSU_18780",
+      "bp": 432,
+      "seconds": 0.0186,
+      "dim": 128
+    },
+    {
+      "locus_tag": "BSU_31510",
+      "bp": 558,
+      "seconds": 0.0199,
+      "dim": 128
+    },
+    {
+      "locus_tag": "BSU_21650",
+      "bp": 711,
+      "seconds": 0.0214,
+      "dim": 128
+    },
+    {
+      "locus_tag": "BSU_36550",
+      "bp": 852,
+      "seconds": 0.0205,
+      "dim": 128
+    },
+    {
+      "locus_tag": "BSU_08450",
+      "bp": 1002,
+      "seconds": 0.0219,
+      "dim": 128
+    },
+    {
+      "locus_tag": "BSU_04060",
+      "bp": 1215,
+      "seconds": 0.0397,
+      "dim": 128
+    },
+    {
+      "locus_tag": "BSU_04600",
+      "bp": 1482,
+      "seconds": 0.0321,
+      "dim": 128
+    },
+    {
+      "locus_tag": "BSU_17210",
+      "bp": 16467,
+      "seconds": 0.2536,
+      "dim": 128
+    }
+  ]
+}

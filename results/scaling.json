@@ -1,0 +1,315 @@
+{
+  "pooling": "mean",
+  "strategy": "chunk_mean",
+  "dataset": {
+    "n_genes": 3929,
+    "n_essential": 353,
+    "n_non_essential": 3576,
+    "majority_class_accuracy": 0.9102,
+    "n_folds": 5,
+    "seed": 0,
+    "quick": false
+  },
+  "baseline": {
+    "all__logistic_regression": {
+      "mcc": 0.269,
+      "auroc": 0.7711,
+      "average_precision": 0.3541,
+      "accuracy": 0.7577,
+      "essential_precision": 0.2167,
+      "essential_recall": 0.6487,
+      "essential_f1": 0.3248,
+      "non_essential_precision": 0.9568,
+      "non_essential_recall": 0.7685,
+      "n_essential": 353,
+      "n_non_essential": 3576,
+      "mcc_ci95": [
+        0.2324,
+        0.3033
+      ],
+      "seconds": 5.4,
+      "n_features": 93
+    },
+    "all__gradient_boosting": {
+      "mcc": 0.3314,
+      "auroc": 0.7936,
+      "average_precision": 0.3791,
+      "accuracy": 0.8682,
+      "essential_precision": 0.3366,
+      "essential_recall": 0.4816,
+      "essential_f1": 0.3963,
+      "non_essential_precision": 0.9466,
+      "non_essential_recall": 0.9063,
+      "n_essential": 353,
+      "n_non_essential": 3576,
+      "mcc_ci95": [
+        0.2877,
+        0.372
+      ],
+      "seconds": 50.8,
+      "n_features": 93
+    }
+  },
+  "results": [
+    {
+      "mcc": 0.2347,
+      "auroc": 0.7524,
+      "average_precision": 0.3077,
+      "accuracy": 0.7427,
+      "essential_precision": 0.1982,
+      "essential_recall": 0.6119,
+      "essential_f1": 0.2994,
+      "non_essential_precision": 0.9517,
+      "non_essential_recall": 0.7556,
+      "model": "hyenadna-tiny",
+      "model_id": "LongSafari/hyenadna-tiny-1k-seqlen-hf",
+      "classifier": "logistic_regression",
+      "params": 438144,
+      "dim": 128,
+      "seconds_per_gene": 0.0346,
+      "mcc_ci95": [
+        0.1985,
+        0.2688
+      ]
+    },
+    {
+      "mcc": 0.2298,
+      "auroc": 0.7253,
+      "average_precision": 0.2348,
+      "accuracy": 0.8526,
+      "essential_precision": 0.2656,
+      "essential_recall": 0.3626,
+      "essential_f1": 0.3066,
+      "non_essential_precision": 0.9347,
+      "non_essential_recall": 0.901,
+      "model": "hyenadna-tiny",
+      "model_id": "LongSafari/hyenadna-tiny-1k-seqlen-hf",
+      "classifier": "gradient_boosting",
+      "params": 438144,
+      "dim": 128,
+      "seconds_per_gene": 0.0346,
+      "mcc_ci95": [
+        0.1845,
+        0.2723
+      ]
+    },
+    {
+      "mcc": 0.2561,
+      "auroc": 0.7524,
+      "average_precision": 0.2744,
+      "accuracy": 0.7625,
+      "essential_precision": 0.214,
+      "essential_recall": 0.6147,
+      "essential_f1": 0.3175,
+      "non_essential_precision": 0.9533,
+      "non_essential_recall": 0.7771,
+      "model": "hyenadna-tiny-d256",
+      "model_id": "LongSafari/hyenadna-tiny-1k-seqlen-d256-hf",
+      "classifier": "logistic_regression",
+      "params": 1645184,
+      "dim": 256,
+      "seconds_per_gene": 0.0571,
+      "mcc_ci95": [
+        0.2204,
+        0.2912
+      ]
+    },
+    {
+      "mcc": 0.2474,
+      "auroc": 0.7174,
+      "average_precision": 0.2522,
+      "accuracy": 0.8603,
+      "essential_precision": 0.2851,
+      "essential_recall": 0.3683,
+      "essential_f1": 0.3214,
+      "non_essential_precision": 0.9358,
+      "non_essential_recall": 0.9088,
+      "model": "hyenadna-tiny-d256",
+      "model_id": "LongSafari/hyenadna-tiny-1k-seqlen-d256-hf",
+      "classifier": "gradient_boosting",
+      "params": 1645184,
+      "dim": 256,
+      "seconds_per_gene": 0.0571,
+      "mcc_ci95": [
+        0.2022,
+        0.2905
+      ]
+    },
+    {
+      "mcc": 0.2356,
+      "auroc": 0.7444,
+      "average_precision": 0.2597,
+      "accuracy": 0.8058,
+      "essential_precision": 0.2281,
+      "essential_recall": 0.4873,
+      "essential_f1": 0.3107,
+      "non_essential_precision": 0.943,
+      "non_essential_recall": 0.8372,
+      "model": "nt-v2-50m",
+      "model_id": "InstaDeepAI/nucleotide-transformer-v2-50m-multi-species",
+      "classifier": "logistic_regression",
+      "params": 55904972,
+      "dim": 512,
+      "seconds_per_gene": 0.2304,
+      "mcc_ci95": [
+        0.1955,
+        0.2757
+      ]
+    },
+    {
+      "mcc": 0.2705,
+      "auroc": 0.7453,
+      "average_precision": 0.2855,
+      "accuracy": 0.8674,
+      "essential_precision": 0.3082,
+      "essential_recall": 0.3824,
+      "essential_f1": 0.3413,
+      "non_essential_precision": 0.9376,
+      "non_essential_recall": 0.9153,
+      "model": "nt-v2-50m",
+      "model_id": "InstaDeepAI/nucleotide-transformer-v2-50m-multi-species",
+      "classifier": "gradient_boosting",
+      "params": 55904972,
+      "dim": 512,
+      "seconds_per_gene": 0.2304,
+      "mcc_ci95": [
+        0.2237,
+        0.3187
+      ]
+    },
+    {
+      "mcc": 0.228,
+      "auroc": 0.7261,
+      "average_precision": 0.2496,
+      "accuracy": 0.7943,
+      "essential_precision": 0.2181,
+      "essential_recall": 0.4986,
+      "essential_f1": 0.3034,
+      "non_essential_precision": 0.9433,
+      "non_essential_recall": 0.8235,
+      "model": "nt-v2-100m",
+      "model_id": "InstaDeepAI/nucleotide-transformer-v2-100m-multi-species",
+      "classifier": "logistic_regression",
+      "params": 97889132,
+      "dim": 512,
+      "seconds_per_gene": 0.4313,
+      "mcc_ci95": [
+        0.1887,
+        0.2662
+      ]
+    },
+    {
+      "mcc": 0.3094,
+      "auroc": 0.7568,
+      "average_precision": 0.347,
+      "accuracy": 0.8844,
+      "essential_precision": 0.3639,
+      "essential_recall": 0.3824,
+      "essential_f1": 0.3729,
+      "non_essential_precision": 0.9387,
+      "non_essential_recall": 0.934,
+      "model": "nt-v2-100m",
+      "model_id": "InstaDeepAI/nucleotide-transformer-v2-100m-multi-species",
+      "classifier": "gradient_boosting",
+      "params": 97889132,
+      "dim": 512,
+      "seconds_per_gene": 0.4313,
+      "mcc_ci95": [
+        0.2611,
+        0.3578
+      ]
+    }
+  ],
+  "leakage": {
+    "hyenadna-tiny": {
+      "pearson_r_embedding_norm_vs_gene_length": -0.1022,
+      "r_squared": 0.0105
+    },
+    "hyenadna-tiny-d256": {
+      "pearson_r_embedding_norm_vs_gene_length": 0.0582,
+      "r_squared": 0.0034
+    },
+    "nt-v2-50m": {
+      "pearson_r_embedding_norm_vs_gene_length": 0.7918,
+      "r_squared": 0.627
+    },
+    "nt-v2-100m": {
+      "pearson_r_embedding_norm_vs_gene_length": -0.3041,
+      "r_squared": 0.0925
+    }
+  },
+  "paired_vs_baseline": {
+    "hyenadna-tiny__logistic_regression": {
+      "delta_mcc": -0.0961,
+      "ci95": [
+        -0.1371,
+        -0.0566
+      ],
+      "fraction_above_zero": 0.0,
+      "versus": "all__gradient_boosting"
+    },
+    "hyenadna-tiny__gradient_boosting": {
+      "delta_mcc": -0.1013,
+      "ci95": [
+        -0.1509,
+        -0.0521
+      ],
+      "fraction_above_zero": 0.0,
+      "versus": "all__gradient_boosting"
+    },
+    "hyenadna-tiny-d256__logistic_regression": {
+      "delta_mcc": -0.0747,
+      "ci95": [
+        -0.1212,
+        -0.0307
+      ],
+      "fraction_above_zero": 0.0005,
+      "versus": "all__gradient_boosting"
+    },
+    "hyenadna-tiny-d256__gradient_boosting": {
+      "delta_mcc": -0.0846,
+      "ci95": [
+        -0.1314,
+        -0.0404
+      ],
+      "fraction_above_zero": 0.0,
+      "versus": "all__gradient_boosting"
+    },
+    "nt-v2-50m__logistic_regression": {
+      "delta_mcc": -0.0946,
+      "ci95": [
+        -0.1408,
+        -0.0492
+      ],
+      "fraction_above_zero": 0.0,
+      "versus": "all__gradient_boosting"
+    },
+    "nt-v2-50m__gradient_boosting": {
+      "delta_mcc": -0.0602,
+      "ci95": [
+        -0.1083,
+        -0.0139
+      ],
+      "fraction_above_zero": 0.0045,
+      "versus": "all__gradient_boosting"
+    },
+    "nt-v2-100m__logistic_regression": {
+      "delta_mcc": -0.1022,
+      "ci95": [
+        -0.1447,
+        -0.059
+      ],
+      "fraction_above_zero": 0.0,
+      "versus": "all__gradient_boosting"
+    },
+    "nt-v2-100m__gradient_boosting": {
+      "delta_mcc": -0.0216,
+      "ci95": [
+        -0.0665,
+        0.0234
+      ],
+      "fraction_above_zero": 0.171,
+      "versus": "all__gradient_boosting"
+    }
+  }
+}

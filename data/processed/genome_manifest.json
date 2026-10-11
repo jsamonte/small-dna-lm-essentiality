@@ -1,0 +1,43 @@
+{
+  "accession": "CP009273.1",
+  "description": "Escherichia coli BW25113, complete genome",
+  "organism": "Escherichia coli BW25113",
+  "strain": "K-12",
+  "genome_length": 4631469,
+  "raw_sha256": "cd47478eabef949c5b4218038a2815c79de9b454fa4efeff91fd330acb3b819c",
+  "raw_downloaded_utc": "2026-10-11T06:07:56+00:00",
+  "xref_accession": "NC_000913.3",
+  "xref_sha256": "64ed9865ac9f7da72907d0cf3edf470d419318538cb345beb87c8369e0a7084e",
+  "eck_to_b_number_pairs": 4602,
+  "genes_total": 4490,
+  "genes_with_b_number": 4467,
+  "genes_by_biotype": {
+    "protein_coding": 4131,
+    "pseudogene": 187,
+    "tRNA": 85,
+    "ncRNA": 64,
+    "rRNA": 22,
+    "tmRNA": 1
+  },
+  "genes_with_compound_location": [
+    "BW25113_4587",
+    "BW25113_0349",
+    "BW25113_4579",
+    "BW25113_4580",
+    "BW25113_0542",
+    "BW25113_0553",
+    "BW25113_4570",
+    "BW25113_4492",
+    "BW25113_4600",
+    "BW25113_4582",
+    "BW25113_4571",
+    "BW25113_4498",
+    "BW25113_2190",
+    "BW25113_3046",
+    "BW25113_4569",
+    "BW25113_3443",
+    "BW25113_3504",
+    "BW25113_4623"
+  ],
+  "duplicate_locus_tags": []
+}

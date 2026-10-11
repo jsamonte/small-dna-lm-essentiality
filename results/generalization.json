@@ -1,0 +1,195 @@
+{
+  "train": {
+    "organism": "E. coli BW25113",
+    "n": 3929,
+    "essential": 353
+  },
+  "test": {
+    "organism": "B. subtilis 168",
+    "n": 4046,
+    "essential": 255,
+    "majority_class_fraction": 0.937
+  },
+  "results": [
+    {
+      "mcc": 0.1744,
+      "auroc": 0.727,
+      "average_precision": 0.2299,
+      "accuracy": 0.7289,
+      "essential_precision": 0.1307,
+      "essential_recall": 0.5843,
+      "essential_f1": 0.2136,
+      "mcc_ci95": [
+        0.1408,
+        0.2091
+      ],
+      "representation": "classical",
+      "classifier": "logistic_regression",
+      "params": null,
+      "within_ecoli_mcc": 0.269,
+      "mcc_drop": 0.0946
+    },
+    {
+      "mcc": 0.1982,
+      "auroc": 0.6629,
+      "average_precision": 0.2166,
+      "accuracy": 0.9145,
+      "essential_precision": 0.2736,
+      "essential_recall": 0.2157,
+      "essential_f1": 0.2412,
+      "mcc_ci95": [
+        0.144,
+        0.2509
+      ],
+      "representation": "classical",
+      "classifier": "gradient_boosting",
+      "params": null,
+      "within_ecoli_mcc": 0.3314,
+      "mcc_drop": 0.1332
+    },
+    {
+      "mcc": 0.0918,
+      "auroc": 0.637,
+      "average_precision": 0.1243,
+      "accuracy": 0.8487,
+      "essential_precision": 0.1242,
+      "essential_recall": 0.2314,
+      "essential_f1": 0.1616,
+      "mcc_ci95": [
+        0.0548,
+        0.1306
+      ],
+      "representation": "hyenadna-tiny",
+      "classifier": "logistic_regression",
+      "params": 438144,
+      "within_ecoli_mcc": 0.2347,
+      "mcc_drop": 0.1429
+    },
+    {
+      "mcc": -0.0193,
+      "auroc": 0.5112,
+      "average_precision": 0.0633,
+      "accuracy": 0.911,
+      "essential_precision": 0.0354,
+      "essential_recall": 0.0157,
+      "essential_f1": 0.0217,
+      "mcc_ci95": [
+        -0.0404,
+        0.0064
+      ],
+      "representation": "hyenadna-tiny",
+      "classifier": "gradient_boosting",
+      "params": 438144,
+      "within_ecoli_mcc": 0.2298,
+      "mcc_drop": 0.2491
+    },
+    {
+      "mcc": 0.1033,
+      "auroc": 0.6573,
+      "average_precision": 0.1049,
+      "accuracy": 0.8085,
+      "essential_precision": 0.1188,
+      "essential_recall": 0.3176,
+      "essential_f1": 0.1729,
+      "mcc_ci95": [
+        0.0663,
+        0.141
+      ],
+      "representation": "hyenadna-tiny-d256",
+      "classifier": "logistic_regression",
+      "params": 1645184,
+      "within_ecoli_mcc": 0.2561,
+      "mcc_drop": 0.1528
+    },
+    {
+      "mcc": 0.0034,
+      "auroc": 0.5271,
+      "average_precision": 0.0663,
+      "accuracy": 0.9118,
+      "essential_precision": 0.0678,
+      "essential_recall": 0.0314,
+      "essential_f1": 0.0429,
+      "mcc_ci95": [
+        -0.0261,
+        0.0357
+      ],
+      "representation": "hyenadna-tiny-d256",
+      "classifier": "gradient_boosting",
+      "params": 1645184,
+      "within_ecoli_mcc": 0.2474,
+      "mcc_drop": 0.244
+    },
+    {
+      "mcc": 0.1415,
+      "auroc": 0.6356,
+      "average_precision": 0.1559,
+      "accuracy": 0.8579,
+      "essential_precision": 0.1581,
+      "essential_recall": 0.2902,
+      "essential_f1": 0.2047,
+      "mcc_ci95": [
+        0.098,
+        0.1832
+      ],
+      "representation": "nt-v2-50m",
+      "classifier": "logistic_regression",
+      "params": 55904972,
+      "within_ecoli_mcc": 0.2356,
+      "mcc_drop": 0.0941
+    },
+    {
+      "mcc": 0.1436,
+      "auroc": 0.672,
+      "average_precision": 0.1769,
+      "accuracy": 0.9224,
+      "essential_precision": 0.2602,
+      "essential_recall": 0.1255,
+      "essential_f1": 0.1693,
+      "mcc_ci95": [
+        0.0911,
+        0.1965
+      ],
+      "representation": "nt-v2-50m",
+      "classifier": "gradient_boosting",
+      "params": 55904972,
+      "within_ecoli_mcc": 0.2705,
+      "mcc_drop": 0.1269
+    },
+    {
+      "mcc": 0.1192,
+      "auroc": 0.6217,
+      "average_precision": 0.1423,
+      "accuracy": 0.8584,
+      "essential_precision": 0.1451,
+      "essential_recall": 0.2549,
+      "essential_f1": 0.1849,
+      "mcc_ci95": [
+        0.079,
+        0.161
+      ],
+      "representation": "nt-v2-100m",
+      "classifier": "logistic_regression",
+      "params": 97889132,
+      "within_ecoli_mcc": 0.228,
+      "mcc_drop": 0.1088
+    },
+    {
+      "mcc": 0.1902,
+      "auroc": 0.6371,
+      "average_precision": 0.1869,
+      "accuracy": 0.9367,
+      "essential_precision": 0.4894,
+      "essential_recall": 0.0902,
+      "essential_f1": 0.1523,
+      "mcc_ci95": [
+        0.1202,
+        0.2564
+      ],
+      "representation": "nt-v2-100m",
+      "classifier": "gradient_boosting",
+      "params": 97889132,
+      "within_ecoli_mcc": 0.3094,
+      "mcc_drop": 0.1192
+    }
+  ]
+}

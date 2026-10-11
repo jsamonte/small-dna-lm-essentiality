@@ -1,0 +1,8 @@
+# Python 3.11, x64. transformers stays on 4.x: the Nucleotide Transformer v2
+# remote code imports find_pruneable_heads_and_indices, which 5.x removed.
+torch==2.14.1
+transformers==4.57.6
+biopython==1.88
+scikit-learn==1.9.1
+pandas==3.0.6
+pytest==9.1.1

@@ -1,0 +1,9 @@
+model,model_id,params,dim,classifier,seconds_per_gene,mcc,mcc_lo,mcc_hi,auroc,average_precision,accuracy,essential_precision,essential_recall,essential_f1,non_essential_precision,non_essential_recall
+hyenadna-tiny,LongSafari/hyenadna-tiny-1k-seqlen-hf,438144,128,gradient_boosting,0.0346,0.2298,0.1845,0.2723,0.7253,0.2348,0.8526,0.2656,0.3626,0.3066,0.9347,0.901
+hyenadna-tiny-d256,LongSafari/hyenadna-tiny-1k-seqlen-d256-hf,1645184,256,gradient_boosting,0.0571,0.2474,0.2022,0.2905,0.7174,0.2522,0.8603,0.2851,0.3683,0.3214,0.9358,0.9088
+nt-v2-50m,InstaDeepAI/nucleotide-transformer-v2-50m-multi-species,55904972,512,gradient_boosting,0.2304,0.2705,0.2237,0.3187,0.7453,0.2855,0.8674,0.3082,0.3824,0.3413,0.9376,0.9153
+nt-v2-100m,InstaDeepAI/nucleotide-transformer-v2-100m-multi-species,97889132,512,gradient_boosting,0.4313,0.3094,0.2611,0.3578,0.7568,0.347,0.8844,0.3639,0.3824,0.3729,0.9387,0.934
+hyenadna-tiny,LongSafari/hyenadna-tiny-1k-seqlen-hf,438144,128,logistic_regression,0.0346,0.2347,0.1985,0.2688,0.7524,0.3077,0.7427,0.1982,0.6119,0.2994,0.9517,0.7556
+hyenadna-tiny-d256,LongSafari/hyenadna-tiny-1k-seqlen-d256-hf,1645184,256,logistic_regression,0.0571,0.2561,0.2204,0.2912,0.7524,0.2744,0.7625,0.214,0.6147,0.3175,0.9533,0.7771
+nt-v2-50m,InstaDeepAI/nucleotide-transformer-v2-50m-multi-species,55904972,512,logistic_regression,0.2304,0.2356,0.1955,0.2757,0.7444,0.2597,0.8058,0.2281,0.4873,0.3107,0.943,0.8372
+nt-v2-100m,InstaDeepAI/nucleotide-transformer-v2-100m-multi-species,97889132,512,logistic_regression,0.4313,0.228,0.1887,0.2662,0.7261,0.2496,0.7943,0.2181,0.4986,0.3034,0.9433,0.8235

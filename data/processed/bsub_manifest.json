@@ -1,0 +1,44 @@
+{
+  "accession": "NC_000964.3",
+  "organism": "Bacillus subtilis subsp. subtilis str. 168",
+  "genome_length": 4215606,
+  "genome_sha256": "ae4b2cd2050960fed63cb2d81ed6f2f92cd42b8fe9fc143622e4cf3a43867dc2",
+  "labels_source": "https://subtiwiki.uni-goettingen.de/v5/api/gene/export",
+  "labels_sha256": "426256564e49c63a4cf9316e3542631547f234eff6df917f499ceec6f20025e4",
+  "labels_downloaded_utc": "2026-10-11T17:08:59+00:00",
+  "subtiwiki_rows": 6132,
+  "subtiwiki_raw_values": {
+    "no": 3968,
+    "(null)": 1753,
+    "yes": 258,
+    "-": 147,
+    "quasi": 6
+  },
+  "rows_without_locus_tag": 10,
+  "unmatched_locus_tags": [
+    "BSU_07540",
+    "BSU_23060",
+    "BSU_29669",
+    "BSU_misc_RNA_38",
+    "new_1395590_1395909",
+    "new_1780399_1780532",
+    "new_2477758_2477958_c",
+    "new_24_297_c",
+    "new_3035475_3036308_c"
+  ],
+  "unmatched_count": 9,
+  "genes_total": 4536,
+  "genes_by_biotype": {
+    "protein_coding": 4237,
+    "misc_RNA": 93,
+    "pseudogene": 88,
+    "tRNA": 86,
+    "rRNA": 30,
+    "ncRNA": 2
+  },
+  "labelled": 4215,
+  "usable_protein_coding": 4046,
+  "usable_essential": 255,
+  "usable_non_essential": 3791,
+  "majority_class_fraction": 0.937
+}

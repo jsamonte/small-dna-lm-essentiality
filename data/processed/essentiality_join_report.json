@@ -1,0 +1,74 @@
+{
+  "st1": {
+    "file": "goodall2018_st1.xlsx",
+    "description": "TraDIS transposon library (primary)",
+    "rows_in_file": 4313,
+    "classes_in_file": {
+      "Essential": 358,
+      "Non-essential": 3793,
+      "Unclear": 162
+    },
+    "malformed_rows": [],
+    "unresolved_names": [
+      "insA",
+      "insB1",
+      "insC1",
+      "insD1",
+      "insE1",
+      "insF1",
+      "insH1",
+      "insI1",
+      "insL1"
+    ],
+    "unresolved_count": 53,
+    "collisions": {},
+    "written": {
+      "Essential": 358,
+      "Non-essential": 3740,
+      "Unclear": 162
+    },
+    "written_total": 4260
+  },
+  "st4": {
+    "file": "goodall2018_st4.xlsx",
+    "description": "TraDIS after outgrowth in LB",
+    "rows_in_file": 4313,
+    "classes_in_file": {
+      "Essential": 356,
+      "Non-essential": 3802,
+      "Unclear": 155
+    },
+    "malformed_rows": [],
+    "unresolved_names": [
+      "insA",
+      "insB1",
+      "insC1",
+      "insD1",
+      "insE1",
+      "insF1",
+      "insH1",
+      "insI1",
+      "insL1"
+    ],
+    "unresolved_count": 53,
+    "collisions": {},
+    "written": {
+      "Essential": 356,
+      "Non-essential": 3749,
+      "Unclear": 155
+    },
+    "written_total": 4260
+  },
+  "coverage_st1": {
+    "genes_in_table": 4490,
+    "protein_coding": 4131,
+    "labelled": 4260,
+    "protein_coding_labelled": 4082,
+    "protein_coding_unlabelled": 49,
+    "usable_protein_coding_excluding_unclear": 3929,
+    "usable_essential": 353,
+    "usable_non_essential": 3576,
+    "imbalance_ratio": 10.13,
+    "majority_class_fraction": 0.9102
+  }
+}

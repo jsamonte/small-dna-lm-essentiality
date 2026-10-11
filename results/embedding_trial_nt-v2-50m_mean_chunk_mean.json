@@ -1,0 +1,72 @@
+{
+  "model": "nt-v2-50m",
+  "model_id": "InstaDeepAI/nucleotide-transformer-v2-50m-multi-species",
+  "pooling": "mean",
+  "strategy": "chunk_mean",
+  "device": "cpu",
+  "n_genes": 3929,
+  "projected_seconds": 905.3,
+  "projected_minutes": 15.1,
+  "trial": [
+    {
+      "locus_tag": "BW25113_1265",
+      "bp": 45,
+      "seconds": 0.0509,
+      "dim": 512
+    },
+    {
+      "locus_tag": "BW25113_3425",
+      "bp": 327,
+      "seconds": 0.1373,
+      "dim": 512
+    },
+    {
+      "locus_tag": "BW25113_0178",
+      "bp": 486,
+      "seconds": 0.1402,
+      "dim": 512
+    },
+    {
+      "locus_tag": "BW25113_0639",
+      "bp": 642,
+      "seconds": 0.1417,
+      "dim": 512
+    },
+    {
+      "locus_tag": "BW25113_2739",
+      "bp": 777,
+      "seconds": 0.1614,
+      "dim": 512
+    },
+    {
+      "locus_tag": "BW25113_2722",
+      "bp": 924,
+      "seconds": 0.2076,
+      "dim": 512
+    },
+    {
+      "locus_tag": "BW25113_0801",
+      "bp": 1086,
+      "seconds": 0.2159,
+      "dim": 512
+    },
+    {
+      "locus_tag": "BW25113_4138",
+      "bp": 1302,
+      "seconds": 0.2333,
+      "dim": 512
+    },
+    {
+      "locus_tag": "BW25113_1421",
+      "bp": 1641,
+      "seconds": 0.3104,
+      "dim": 512
+    },
+    {
+      "locus_tag": "BW25113_1978",
+      "bp": 7077,
+      "seconds": 1.8279,
+      "dim": 512
+    }
+  ]
+}

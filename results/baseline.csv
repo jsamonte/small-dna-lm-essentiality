@@ -1,0 +1,7 @@
+feature_set,model,n_features,mcc,mcc_lo,mcc_hi,auroc,average_precision,accuracy,ess_precision,ess_recall,ess_f1
+all,logistic_regression,93,0.269,0.2324,0.3033,0.7711,0.3541,0.7577,0.2167,0.6487,0.3248
+all,gradient_boosting,93,0.3314,0.2877,0.372,0.7936,0.3791,0.8682,0.3366,0.4816,0.3963
+length_only,logistic_regression,3,0.0405,0.0088,0.0743,0.526,0.102,0.6806,0.1078,0.3513,0.165
+length_only,gradient_boosting,3,-0.0096,-0.0415,0.021,0.5001,0.0925,0.5767,0.0865,0.3881,0.1415
+no_length,logistic_regression,90,0.2753,0.2387,0.3098,0.7709,0.356,0.7595,0.2197,0.6572,0.3293
+no_length,gradient_boosting,90,0.3377,0.2931,0.3785,0.7861,0.3625,0.872,0.3463,0.4788,0.4019
