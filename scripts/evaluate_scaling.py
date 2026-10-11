@@ -135,6 +135,23 @@ def trial_seconds(model_key):
     return round(d["projected_seconds"] / d["n_genes"], 4)
 
 
+def short_label(row):
+    """Two short lines: family above, size below. The full ids are too wide --
+    the two HyenaDNA points sit close together on a log axis and their labels
+    overlap."""
+    params = row["params"]
+    size = f"{params / 1e6:.1f}M" if params >= 1e6 else f"{params / 1e3:.0f}k"
+    family = "NT v2" if row["model"].startswith("nt-") else "HyenaDNA"
+    return f"{family}\n{size}"
+
+
+def lowest_ci(points, i):
+    """Lower bound of this point and its immediate neighbours, so labels in a
+    cluster sit on one line instead of stepping over each other."""
+    window = points[max(0, i - 1):i + 2]
+    return min(p["mcc_ci95"][0] for p in window)
+
+
 def plot(rows, baseline, majority, out_dir):
     import matplotlib
     matplotlib.use("Agg")
@@ -144,7 +161,8 @@ def plot(rows, baseline, majority, out_dir):
         ("params", "Model parameters", "scaling_mcc_vs_params.png", True),
         ("seconds_per_gene", "Inference seconds per gene (CPU)", "scaling_mcc_vs_time.png", True),
     ):
-        fig, ax = plt.subplots(figsize=(7.2, 4.8))
+        fig, ax = plt.subplots(figsize=(7.6, 5.0))
+        ax.set_xmargin(0.14)          # room for the leftmost and rightmost labels
         for clf, marker in (("gradient_boosting", "o"), ("logistic_regression", "s")):
             pts = sorted([r for r in rows if r["classifier"] == clf and r.get(xkey)],
                          key=lambda r: r[xkey])
@@ -158,8 +176,17 @@ def plot(rows, baseline, majority, out_dir):
                         label=f"DNA LM + {clf.replace('_', ' ')}")
             if clf == "gradient_boosting":      # label once, not twice
                 for i, p in enumerate(pts):
-                    ax.annotate(p["model"], (p[xkey], p["mcc"]), textcoords="offset points",
-                                xytext=(0, 11 if i % 2 == 0 else -17), ha="center", fontsize=7)
+                    # Anchor each label under its lower error bar, not the marker,
+                    # so tall intervals cannot push one label onto its neighbour.
+                    # End labels are nudged inward so they stay inside the axes.
+                    low = min(p["mcc_ci95"][0], lowest_ci(pts, i))
+                    ha = "left" if i == 0 else "right" if i == len(pts) - 1 else "center"
+                    dx = 2 if i == 0 else -2 if i == len(pts) - 1 else 0
+                    ax.annotate(short_label(p), (p[xkey], low), textcoords="offset points",
+                                xytext=(dx, -15), ha=ha, va="top", fontsize=8,
+                                linespacing=1.15,
+                                bbox=dict(boxstyle="round,pad=0.18", fc="white",
+                                          ec="none", alpha=0.8))
         best = max(baseline.values(), key=lambda m: m["mcc"])
         ax.axhline(best["mcc"], color="crimson", ls="--", lw=1.4,
                    label=f"classical features (MCC {best['mcc']:.3f})")
@@ -180,6 +207,19 @@ def plot(rows, baseline, majority, out_dir):
 
 
 def main():
+    import argparse
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("--plot-only", action="store_true",
+                    help="redraw the figures from results/scaling.json without refitting")
+    opts = ap.parse_args()
+    if opts.plot_only:
+        saved = json.loads((RESULTS / "scaling.json").read_text())
+        bl = json.loads((RESULTS / "baseline.json").read_text())
+        plot(saved["results"],
+             {k: v for k, v in bl["results"].items() if k.startswith("all__")},
+             bl["dataset"]["majority_class_accuracy"], RESULTS)
+        return
+
     tags, y, fold_ids, gene_len = load_common()
     print(f"{len(tags):,} genes, {y.sum()} essential, folds from cv_folds.csv")
 

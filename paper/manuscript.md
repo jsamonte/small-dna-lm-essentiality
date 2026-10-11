@@ -14,12 +14,39 @@ DNA language models are growing rapidly, but gene essentiality is a coarse prope
 
 ## 1. Introduction
 
-*Outline to write:*
+Language models trained on DNA have grown quickly, from a few hundred thousand
+parameters to tens of billions, and the implicit promise of that growth is that
+larger models learn more biology. For most downstream tasks that promise is
+rarely tested directly against the cheap alternative. A model is shown to work,
+and the comparison is to another model.
 
-- Genome language models (Evo, Nucleotide Transformer, HyenaDNA) are scaling fast, and scaling is usually assumed to help.
-- Gene essentiality is a coarse, well-labelled, biologically central property: a good probe for how much of that scaling reaches a practical task.
-- The question nobody asks: not *does a frontier model work*, but *how small can you go before the signal disappears*. This matters for anyone without a datacenter GPU.
-- State the contribution: a controlled scaling comparison with a strong classical baseline, identical folds, an explicit leakage control, and a cross-organism test.
+Gene essentiality is a useful place to test it. Whether a bacterium can survive
+losing a gene is a coarse, binary, biologically central property; it has been
+measured genome-wide in several organisms by transposon mutagenesis and
+systematic deletion, so labels exist in quantity and are not derived from
+sequence. It is also a property with a well-known cheap predictor: essential
+genes are enriched for high expression, and high expression leaves a clear
+signature in codon usage and base composition that a short script can measure.
+Any claim that a language model has learned something about essentiality has to
+clear that signature first.
+
+The question we ask is therefore not whether a frontier model works, which
+anyone with a sufficiently large machine can answer, but how much model is
+needed before the signal appears at all — and whether it ever exceeds what
+free sequence statistics already provide. This framing matters practically.
+The largest genome models require datacenter accelerators, and much of the
+genomics that would benefit from them happens on modest hardware. If a model
+small enough to run on a laptop retains most of the available signal, that is
+a useful result for those users. If no model of any size beats counting codons,
+that is a more useful result still.
+
+We compare four DNA language models spanning 438 thousand to 98 million
+parameters, drawn from two architectures with different tokenisation and
+context behaviour, against a classical sequence-feature baseline. All models
+are evaluated as frozen feature extractors with a shallow classifier, on
+identical cross-validation folds, with the majority-class rate reported beside
+every metric and an explicit control for the most likely confound. We then test
+whether anything learned transfers to a second organism without retraining.
 
 ## 2. Methods
 
@@ -106,13 +133,59 @@ Classifiers trained on all 3,929 *E. coli* genes were applied without retraining
 
 ## 4. Discussion
 
-*Outline to write:*
+Across the four models tested, no DNA language model extracted essentiality
+signal beyond what gene length, base composition and codon statistics already
+provide. Seven of eight model-classifier combinations performed significantly
+worse than that baseline in paired comparisons on identical genes; the best
+merely drew level. The result should be stated with its scope attached: four
+models, two architectures, one training organism, frozen representations. It is
+not a scaling law, and architecture is not separable from scale here.
 
-- The headline: across the four models tested, scaling did not buy essentiality signal beyond cheap sequence statistics. Say "across the four models tested", never "DNA language models scale as".
-- Why cheap features are so strong here: essential genes are enriched for high expression, which codon usage and composition capture directly.
-- What this means for practitioners without GPUs: the laptop-scale option loses little, because the expensive option also fails to beat free features.
-- Where a language model might still win: fine-tuning rather than frozen embeddings, tasks needing regulatory context, or organisms with no codon-usage reference.
-- Relation to prior work on essentiality prediction and to genome language model evaluations.
+The baseline's strength is not an accident, and it suggests why the comparison
+goes the way it does. Essential genes are enriched for high expression, and
+highly expressed genes have distinctive synonymous codon usage. The classical
+features measure that directly: the codon adaptation index and the effective
+number of codons are, in effect, hand-built expression proxies refined over
+decades. A pretrained language model must recover the same signal indirectly
+from a generic objective, and then survive compression into a single pooled
+vector. On a task whose best-known correlate is already a cheap summary
+statistic, the hand-built feature has a real advantage.
+
+The transfer result sharpens this. Applied to *B. subtilis* without
+retraining, every representation degraded, but not equally: the two smallest
+models fell to chance, while the larger ones retained roughly the same
+proportion of their performance as the classical features did. Within a single
+organism the small models had looked respectable. They were, it appears,
+fitting *E. coli*'s particular composition rather than anything about
+essentiality. That is a more interesting conclusion than a flat "scaling does
+not help", and it is the one place in this study where parameters bought
+something: not accuracy, but generality. A reader deciding whether to run a
+small model on their own hardware should weigh that. Within the organism you
+have labels for, the small model is nearly as good; outside it, it is nothing.
+
+The classifier interacts with this in a way worth noting. For the HyenaDNA
+models, logistic regression transferred better than gradient boosting, the
+reverse of the within-organism ordering. The flexible model exploits
+organism-specific structure that does not survive the move. Evaluations that
+report only the best classifier per representation would miss this entirely.
+
+Gene length deserves comment because it is the standard objection. Here it is
+not available as an explanation: length alone is no better than chance, and
+removing every length feature leaves the baseline unchanged. One model's
+embedding norms nevertheless track length closely, which says something about
+what that representation encodes but cannot account for its predictions. On a
+dataset where length did predict the label, the same correlation would be a
+serious confound, and the check is cheap enough that it should be routine.
+
+What this study does not show is that these models contain no essentiality
+information. Frozen embeddings with a shallow classifier probe what is linearly
+and non-linearly accessible in the pretrained representation without further
+training; fine-tuning may well do better, and the question of how much better
+is the natural next experiment. Nor does it speak to tasks where context
+genuinely matters — regulatory prediction, operon structure, long-range
+interactions — where a model that reads kilobases has an advantage no codon
+count can replicate. The claim is narrower: for this task, at this scale, as
+frozen features, the expensive option did not beat the free one.
 
 ## 5. Limitations
 
@@ -130,13 +203,13 @@ All code is in this repository. `python run_all.py` reproduces every file in `re
 
 ## References
 
-- Goodall ECA, Robinson A, Johnston IG, et al. (2018) The Essential Genome of *Escherichia coli* K-12. *mBio* 9:e02096-17.
-- Baba T, Ara T, Hasegawa M, et al. (2006) Construction of *Escherichia coli* K-12 in-frame, single-gene knockout mutants: the Keio collection. *Mol Syst Biol* 2.
-- Koo B-M, Kritikos G, Farelli JD, et al. (2017) Construction and Analysis of Two Genome-Scale Deletion Libraries for *Bacillus subtilis*. *Cell Systems* 4:291-305.
-- Pedreira T, Elfmann C, Stülke J (2022) The current state of SubtiWiki, the database for the model organism *Bacillus subtilis*. *Nucleic Acids Research* 50:D875-D882.
-- Nguyen E, Poli M, Faizi M, et al. (2023) HyenaDNA: Long-Range Genomic Sequence Modeling at Single Nucleotide Resolution. *NeurIPS*.
-- Dalla-Torre H, Gonzalez L, Mendoza-Revilla J, et al. (2024) Nucleotide Transformer: building and evaluating robust foundation models for human genomics. *Nature Methods*.
-- Sharp PM, Li W-H (1987) The codon adaptation index. *Nucleic Acids Research* 15:1281-1295.
-- Wright F (1990) The 'effective number of codons' used in a gene. *Gene* 87:23-29.
+1. Goodall ECA, Robinson A, Johnston IG, Jabbari S, Turner KA, Cunningham AF, Lund PA, Cole JA, Henderson IR (2018) The Essential Genome of *Escherichia coli* K-12. *mBio* 9(1):e02096-17. doi:10.1128/mBio.02096-17
+2. Baba T, Ara T, Hasegawa M, Takai Y, Okumura Y, Baba M, Datsenko KA, Tomita M, Wanner BL, Mori H (2006) Construction of *Escherichia coli* K-12 in-frame, single-gene knockout mutants: the Keio collection. *Molecular Systems Biology* 2:2006.0008. doi:10.1038/msb4100050
+3. Koo B-M, Kritikos G, Farelli JD, Todor H, Tong K, Kimsey H, Wapinski I, Galardini M, Cabal A, Peters JM, Hachmann A-B, Rudner DZ, Allen KN, Typas A, Gross CA (2017) Construction and Analysis of Two Genome-Scale Deletion Libraries for *Bacillus subtilis*. *Cell Systems* 4(3):291-305.e7. doi:10.1016/j.cels.2016.12.013
+4. Pedreira T, Elfmann C, Stülke J (2022) The current state of *Subti*Wiki, the database for the model organism *Bacillus subtilis*. *Nucleic Acids Research* 50(D1):D875-D882. doi:10.1093/nar/gkab943
+5. Nguyen E, Poli M, Faizi M, Thomas A, Wornow M, Birch-Sykes C, Massaroli S, Patel A, Rabideau C, Bengio Y, Ermon S, Ré C, Baccus S (2023) HyenaDNA: Long-Range Genomic Sequence Modeling at Single Nucleotide Resolution. In: *Advances in Neural Information Processing Systems 36 (NeurIPS 2023)*, pp 43177-43201. Curran Associates. doi:10.52202/075280-1872
+6. Dalla-Torre H, Gonzalez L, Mendoza-Revilla J, Lopez Carranza N, Grzywaczewski AH, Oteri F, Dallago C, Trop E, de Almeida BP, Sirelkhatim H, Richard G, Skwark M, Beguir K, Lopez M, Pierrot T (2025) Nucleotide Transformer: building and evaluating robust foundation models for human genomics. *Nature Methods* 22(2):287-297. doi:10.1038/s41592-024-02523-z
+7. Sharp PM, Li W-H (1987) The codon Adaptation Index--a measure of directional synonymous codon usage bias, and its potential applications. *Nucleic Acids Research* 15(3):1281-1295. doi:10.1093/nar/15.3.1281
+8. Wright F (1990) The 'effective number of codons' used in a gene. *Gene* 87(1):23-29. doi:10.1016/0378-1119(90)90491-9
 
-*Verify every citation against the publisher page before submission; these were written from memory and may contain errors in year, volume or author list.*
+*Verified against Crossref and PubMed on 2026-10-11. Two points a copy-editor may query: the dash in reference 7's title is rendered `--` following PubMed, and Crossref's lowercase variant of that title disagrees with PubMed, Europe PMC and Semantic Scholar; reference 5's author order follows the NeurIPS proceedings, which differs from the arXiv preprint.*

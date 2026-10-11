@@ -24,6 +24,15 @@ def load(name, where=RESULTS):
     return json.loads(path.read_text()) if path.exists() else None
 
 
+def prose(name, fallback):
+    """Author-written sections live in paper/sections/ so regenerating the
+    manuscript never overwrites them. Numbers are generated; argument is not."""
+    path = PAPER / "sections" / f"{name}.md"
+    if path.exists():
+        return path.read_text(encoding="utf-8").rstrip().split("\n")
+    return fallback
+
+
 def fmt_ci(ci):
     return f"[{ci[0]:+.3f}, {ci[1]:+.3f}]" if ci else "n/a"
 
@@ -90,17 +99,11 @@ def main():
     # ------------------------------------------------------------ introduction
     w("## 1. Introduction")
     w("")
-    w("*Outline to write:*")
-    w("")
-    w("- Genome language models (Evo, Nucleotide Transformer, HyenaDNA) are scaling fast, "
-      "and scaling is usually assumed to help.")
-    w("- Gene essentiality is a coarse, well-labelled, biologically central property: a "
-      "good probe for how much of that scaling reaches a practical task.")
-    w("- The question nobody asks: not *does a frontier model work*, but *how small can "
-      "you go before the signal disappears*. This matters for anyone without a "
-      "datacenter GPU.")
-    w("- State the contribution: a controlled scaling comparison with a strong classical "
-      "baseline, identical folds, an explicit leakage control, and a cross-organism test.")
+    for line in prose("introduction", [
+        "*Outline to write: scaling of genome language models; essentiality as a probe;",
+        "how small can you go; why it matters without a datacenter GPU; the contribution.*",
+    ]):
+        w(line)
     w("")
 
     # ----------------------------------------------------------------- methods
@@ -281,20 +284,8 @@ def main():
     # -------------------------------------------------------------- discussion
     w("## 4. Discussion")
     w("")
-    w("*Outline to write:*")
-    w("")
-    w("- The headline: across the four models tested, scaling did not buy essentiality "
-      "signal beyond cheap sequence statistics. Say \"across the four models tested\", "
-      "never \"DNA language models scale as\".")
-    w("- Why cheap features are so strong here: essential genes are enriched for high "
-      "expression, which codon usage and composition capture directly.")
-    w("- What this means for practitioners without GPUs: the laptop-scale option loses "
-      "little, because the expensive option also fails to beat free features.")
-    w("- Where a language model might still win: fine-tuning rather than frozen "
-      "embeddings, tasks needing regulatory context, or organisms with no codon-usage "
-      "reference.")
-    w("- Relation to prior work on essentiality prediction and to genome language model "
-      "evaluations.")
+    for line in prose("discussion", ["*Outline to write.*"]):
+        w(line)
     w("")
 
     # ------------------------------------------------------------- limitations
@@ -338,25 +329,44 @@ def main():
 
     w("## References")
     w("")
-    w("- Goodall ECA, Robinson A, Johnston IG, et al. (2018) The Essential Genome of "
-      "*Escherichia coli* K-12. *mBio* 9:e02096-17.")
-    w("- Baba T, Ara T, Hasegawa M, et al. (2006) Construction of *Escherichia coli* K-12 "
-      "in-frame, single-gene knockout mutants: the Keio collection. *Mol Syst Biol* 2.")
-    w("- Koo B-M, Kritikos G, Farelli JD, et al. (2017) Construction and Analysis of Two "
-      "Genome-Scale Deletion Libraries for *Bacillus subtilis*. *Cell Systems* 4:291-305.")
-    w("- Pedreira T, Elfmann C, Stülke J (2022) The current state of SubtiWiki, the database "
-      "for the model organism *Bacillus subtilis*. *Nucleic Acids Research* 50:D875-D882.")
-    w("- Nguyen E, Poli M, Faizi M, et al. (2023) HyenaDNA: Long-Range Genomic Sequence "
-      "Modeling at Single Nucleotide Resolution. *NeurIPS*.")
-    w("- Dalla-Torre H, Gonzalez L, Mendoza-Revilla J, et al. (2024) Nucleotide Transformer: "
+    # Verified against Crossref and PubMed on 2026-10-11. Do not edit from
+    # memory: five of these eight were wrong in the first draft.
+    w("1. Goodall ECA, Robinson A, Johnston IG, Jabbari S, Turner KA, Cunningham AF, "
+      "Lund PA, Cole JA, Henderson IR (2018) The Essential Genome of *Escherichia coli* "
+      "K-12. *mBio* 9(1):e02096-17. doi:10.1128/mBio.02096-17")
+    w("2. Baba T, Ara T, Hasegawa M, Takai Y, Okumura Y, Baba M, Datsenko KA, Tomita M, "
+      "Wanner BL, Mori H (2006) Construction of *Escherichia coli* K-12 in-frame, "
+      "single-gene knockout mutants: the Keio collection. *Molecular Systems Biology* "
+      "2:2006.0008. doi:10.1038/msb4100050")
+    w("3. Koo B-M, Kritikos G, Farelli JD, Todor H, Tong K, Kimsey H, Wapinski I, "
+      "Galardini M, Cabal A, Peters JM, Hachmann A-B, Rudner DZ, Allen KN, Typas A, "
+      "Gross CA (2017) Construction and Analysis of Two Genome-Scale Deletion Libraries "
+      "for *Bacillus subtilis*. *Cell Systems* 4(3):291-305.e7. "
+      "doi:10.1016/j.cels.2016.12.013")
+    w("4. Pedreira T, Elfmann C, Stülke J (2022) The current state of *Subti*Wiki, the "
+      "database for the model organism *Bacillus subtilis*. *Nucleic Acids Research* "
+      "50(D1):D875-D882. doi:10.1093/nar/gkab943")
+    w("5. Nguyen E, Poli M, Faizi M, Thomas A, Wornow M, Birch-Sykes C, Massaroli S, "
+      "Patel A, Rabideau C, Bengio Y, Ermon S, Ré C, Baccus S (2023) HyenaDNA: "
+      "Long-Range Genomic Sequence Modeling at Single Nucleotide Resolution. In: "
+      "*Advances in Neural Information Processing Systems 36 (NeurIPS 2023)*, "
+      "pp 43177-43201. Curran Associates. doi:10.52202/075280-1872")
+    w("6. Dalla-Torre H, Gonzalez L, Mendoza-Revilla J, Lopez Carranza N, "
+      "Grzywaczewski AH, Oteri F, Dallago C, Trop E, de Almeida BP, Sirelkhatim H, "
+      "Richard G, Skwark M, Beguir K, Lopez M, Pierrot T (2025) Nucleotide Transformer: "
       "building and evaluating robust foundation models for human genomics. *Nature "
-      "Methods*.")
-    w("- Sharp PM, Li W-H (1987) The codon adaptation index. *Nucleic Acids Research* "
-      "15:1281-1295.")
-    w("- Wright F (1990) The 'effective number of codons' used in a gene. *Gene* 87:23-29.")
+      "Methods* 22(2):287-297. doi:10.1038/s41592-024-02523-z")
+    w("7. Sharp PM, Li W-H (1987) The codon Adaptation Index--a measure of directional "
+      "synonymous codon usage bias, and its potential applications. *Nucleic Acids "
+      "Research* 15(3):1281-1295. doi:10.1093/nar/15.3.1281")
+    w("8. Wright F (1990) The 'effective number of codons' used in a gene. *Gene* "
+      "87(1):23-29. doi:10.1016/0378-1119(90)90491-9")
     w("")
-    w("*Verify every citation against the publisher page before submission; these were "
-      "written from memory and may contain errors in year, volume or author list.*")
+    w("*Verified against Crossref and PubMed on 2026-10-11. Two points a copy-editor may "
+      "query: the dash in reference 7's title is rendered `--` following PubMed, and "
+      "Crossref's lowercase variant of that title disagrees with PubMed, Europe PMC and "
+      "Semantic Scholar; reference 5's author order follows the NeurIPS proceedings, "
+      "which differs from the arXiv preprint.*")
 
     PAPER.mkdir(parents=True, exist_ok=True)
     out = PAPER / "manuscript.md"
