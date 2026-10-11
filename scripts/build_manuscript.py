@@ -75,25 +75,26 @@ def main():
     # ---------------------------------------------------------------- abstract
     w("## Abstract")
     w("")
-    w("> Draft. Rewrite in your own voice once the Discussion is settled.")
-    w("")
-    w(f"DNA language models are growing rapidly, but gene essentiality is a coarse "
-      f"property and it is unclear how much model is needed to predict it. We compared "
-      f"four DNA language models spanning {min(r['params'] for r in rows):,} to "
-      f"{max(r['params'] for r in rows):,} parameters against a classical "
-      f"sequence-feature baseline on {ds['n_genes']:,} protein-coding genes of "
-      f"*Escherichia coli* BW25113, using identical cross-validation folds throughout. "
-      f"The best language model reached MCC {best_lm['mcc']:.3f} "
-      f"({best_lm['model']}, {best_lm['classifier'].replace('_', ' ')}), against "
-      f"{best_bl['mcc']:.3f} for classical features. In paired bootstrap comparisons on "
-      f"identical genes, {n_worse} of {len(paired)} model-classifier combinations were "
-      f"significantly worse than the baseline and {n_better} were better. "
-      f"Performance did not increase consistently with parameter count. "
-      f"Gene length, often suspected as a confound, carried almost no signal "
-      f"(MCC {len_only['mcc']:.3f}), although one model's embedding norms correlated "
-      f"strongly with it. We conclude that, across the four models tested, scaling "
-      f"to 10^8 parameters did not yield essentiality signal beyond cheap sequence "
-      f"statistics.")
+    for line in prose("abstract", [
+        f"DNA language models are growing rapidly, but gene essentiality is a coarse "
+        f"property and it is unclear how much model is needed to predict it. We compared "
+        f"four DNA language models spanning {min(r['params'] for r in rows):,} to "
+        f"{max(r['params'] for r in rows):,} parameters against a classical "
+        f"sequence-feature baseline on {ds['n_genes']:,} protein-coding genes of "
+        f"*Escherichia coli* BW25113, using identical cross-validation folds throughout. "
+        f"The best language model reached MCC {best_lm['mcc']:.3f} "
+        f"({best_lm['model']}, {best_lm['classifier'].replace('_', ' ')}), against "
+        f"{best_bl['mcc']:.3f} for classical features. In paired bootstrap comparisons on "
+        f"identical genes, {n_worse} of {len(paired)} model-classifier combinations were "
+        f"significantly worse than the baseline and {n_better} were better. "
+        f"Performance did not increase consistently with parameter count. "
+        f"Gene length, often suspected as a confound, carried almost no signal "
+        f"(MCC {len_only['mcc']:.3f}), although one model's embedding norms correlated "
+        f"strongly with it. We conclude that, across the four models tested, scaling "
+        f"to 10^8 parameters did not yield essentiality signal beyond cheap sequence "
+        f"statistics.",
+    ]):
+        w(line)
     w("")
 
     # ------------------------------------------------------------ introduction
