@@ -7,6 +7,7 @@ those are the author's argument to make, not a script's.
     .venv\\Scripts\\python scripts\\build_manuscript.py
 """
 
+import atexit
 import json
 import sys
 from pathlib import Path
@@ -24,12 +25,32 @@ def load(name, where=RESULTS):
     return json.loads(path.read_text()) if path.exists() else None
 
 
+#: A section file seeded from a template carries this marker. While it is
+#: present the section counts as unwritten: the build substitutes the outline
+#: and says so loudly on exit, so placeholder text can never be mistaken for
+#: prose in a posted preprint. Delete the marker line when you have written it.
+UNWRITTEN_MARKER = "<!-- UNWRITTEN -->"
+_unwritten = []
+
+
+@atexit.register
+def _warn_unwritten():
+    if _unwritten:
+        names = ", ".join(sorted(set(_unwritten)))
+        print()
+        print("  !! STILL UNWRITTEN: " + names)
+        print("     Those sections show a generated outline, not your prose.")
+        print("     Remove the <!-- UNWRITTEN --> line once you have written one.")
 def prose(name, fallback):
     """Author-written sections live in paper/sections/ so regenerating the
     manuscript never overwrites them. Numbers are generated; argument is not."""
     path = PAPER / "sections" / f"{name}.md"
     if path.exists():
-        return path.read_text(encoding="utf-8").rstrip().split("\n")
+        text = path.read_text(encoding="utf-8")
+        if UNWRITTEN_MARKER in text:
+            _unwritten.append(name)
+            return fallback
+        return text.rstrip().split("\n")
     return fallback
 
 
