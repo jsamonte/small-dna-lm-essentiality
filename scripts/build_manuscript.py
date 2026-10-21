@@ -29,6 +29,24 @@ def load(name, where=RESULTS):
 #: present the section counts as unwritten: the build substitutes the outline
 #: and says so loudly on exit, so placeholder text can never be mistaken for
 #: prose in a posted preprint. Delete the marker line when you have written it.
+#: A section drafted BY CLAUDE rather than by the author carries this marker.
+#: Unlike UNWRITTEN it is still used, so the manuscript reads end to end - but
+#: every build says so. A committee assesses how the AUTHOR reasons, and prose
+#: that was edited rather than argued does not survive an interview. Delete the
+#: marker once the section has been rewritten in the author's own words.
+DRAFT_MARKER = "<!-- DRAFT -->"
+_drafted = []
+SPLIT_ON = chr(10)
+
+
+@atexit.register
+def _warn_drafted():
+    if _drafted:
+        names = ", ".join(sorted(set(_drafted)))
+        print()
+        print("  ~~ STILL IN CLAUDE'S WORDS: " + names)
+        print("     Usable, and NOT yours yet. Rewrite before posting.")
+        print("     Remove the <!-- DRAFT --> line when you have.")
 UNWRITTEN_MARKER = "<!-- UNWRITTEN -->"
 _unwritten = []
 
@@ -42,15 +60,15 @@ def _warn_unwritten():
         print("     Those sections show a generated outline, not your prose.")
         print("     Remove the <!-- UNWRITTEN --> line once you have written one.")
 def prose(name, fallback):
-    """Author-written sections live in paper/sections/ so regenerating the
-    manuscript never overwrites them. Numbers are generated; argument is not."""
     path = PAPER / "sections" / f"{name}.md"
     if path.exists():
         text = path.read_text(encoding="utf-8")
         if UNWRITTEN_MARKER in text:
             _unwritten.append(name)
             return fallback
-        return text.rstrip().split("\n")
+        if DRAFT_MARKER in text:
+            _drafted.append(name)
+        return text.rstrip().split(SPLIT_ON)
     return fallback
 
 
