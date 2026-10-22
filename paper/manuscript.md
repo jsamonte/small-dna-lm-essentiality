@@ -199,6 +199,9 @@ frozen features, the expensive option did not beat the free one.
 
 All code is in this repository. `python run_all.py` reproduces every file in `results/` from a fresh clone. Sequence data is downloaded from NCBI (`CP009273.1`, `NC_000964.3`) and essentiality labels from the sources cited above; the Goodall supplementary tables are committed because their hosts block automated download.
 
+
+> **>>> BEFORE POSTING: make the repository public and put its URL here. <<<** This section promises code a reader can run. A private repository makes that promise false, and a dead link in a preprint is worse than no link.
+
 ## References
 
 1. Goodall ECA, Robinson A, Johnston IG, Jabbari S, Turner KA, Cunningham AF, Lund PA, Cole JA, Henderson IR (2018) The Essential Genome of *Escherichia coli* K-12. *mBio* 9(1):e02096-17. doi:10.1128/mBio.02096-17

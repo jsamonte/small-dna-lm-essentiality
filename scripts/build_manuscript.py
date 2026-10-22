@@ -367,6 +367,12 @@ def main():
       "download.")
     w("")
 
+    w("")
+    w("> **>>> BEFORE POSTING: make the repository public and put its URL "
+      "here. <<<** This section promises code a reader can run. A private "
+      "repository makes that promise false, and a dead link in a preprint is "
+      "worse than no link.")
+    w("")
     w("## References")
     w("")
     # Verified against Crossref and PubMed on 2026-10-11. Do not edit from
