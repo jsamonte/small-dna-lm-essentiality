@@ -1,50 +1,50 @@
 # How small can a DNA language model be and still predict gene essentiality?
 
-*Draft manuscript skeleton. Methods and Results are generated from `results/` by
-`scripts/build_manuscript.py`; do not edit numbers here by hand. Introduction and
-Discussion are outlines for the author.*
+*Methods, Results and Limitations are generated from `results/` by
+`scripts/build_manuscript.py`; do not edit numbers here. Abstract, Introduction
+and Discussion are in `paper/sections/` and are the author's to write.*
 
 Independent researcher, Beaumont, TX
 
 ## Abstract
 
-DNA language models are growing rapidly, but gene essentiality is a coarse property and it is unclear how much model is needed to predict it. We compared four DNA language models spanning 438,144 to 97,889,132 parameters against a classical sequence-feature baseline on 3,929 protein-coding genes of *Escherichia coli* BW25113, using identical cross-validation folds throughout. The best language model reached MCC 0.309 (nt-v2-100m, gradient boosting), against 0.331 for classical features. In paired bootstrap comparisons on identical genes, 7 of 8 model-classifier combinations were significantly worse than the baseline and 0 were better. Performance did not increase consistently with parameter count. Gene length, often suspected as a confound, carried almost no signal (MCC -0.010), although one model's embedding norms correlated strongly with it. We conclude that, across the four models tested, scaling to 10^8 parameters did not yield essentiality signal beyond cheap sequence statistics.
+DNA language models are growing rapidly, but gene essentiality is a coarse property and it is unclear how much model is needed to predict it. We conclude that, across the four models tested, scaling to 10^8 parameters did not yield essentiality signal beyond cheap sequence statistics. We reached that conclusion by comparing four DNA language models spanning 438,144 to 97,889,132 parameters against a classical sequence-feature baseline on 3,929 protein-coding genes of *Escherichia coli* BW25113, using identical cross-validation folds throughout. The best language model reached MCC 0.309 (nt-v2-100m, gradient boosting), against 0.331 for classical features. In paired bootstrap comparisons on identical genes, 7 of 8 model-classifier combinations were significantly worse than the baseline and 0 were better. Furthermore, performance did not increase consistently with parameter count. Also, gene length, often suspected as a confound, carried almost no signal (MCC −0.010), although one model's embedding norms correlated strongly with it.
 
 ## 1. Introduction
 
 Language models trained on DNA have grown quickly, from a few hundred thousand
-parameters to tens of billions, and the implicit promise of that growth is that
-larger models learn more biology. For most downstream tasks that promise is
+parameters to the 40 billion of Evo 2 (Brixi et al., 2026), and the implicit
+promise of that growth is that larger models learn more biology. For most downstream tasks that promise is
 rarely tested directly against the cheap alternative. A model is shown to work,
 and the comparison is to another model.
 
 Gene essentiality is a useful place to test it. Whether a bacterium can survive
-losing a gene is a coarse, binary, biologically central property; it has been
-measured genome-wide in several organisms by transposon mutagenesis and
-systematic deletion, so labels exist in quantity and are not derived from
-sequence. It is also a property with a well-known cheap predictor: essential
-genes are enriched for high expression, and high expression leaves a clear
-signature in codon usage and base composition that a short script can measure.
-Any claim that a language model has learned something about essentiality has to
-clear that signature first.
+losing a gene is a coarse, binary, biologically central property. Also gene
+essentiality has been measured genome-wide in several organisms by transposon
+mutagenesis and systematic deletion, so labels exist in quantity and are not
+derived from sequence. Gene essentiality is also a property with a well-known
+cheap predictor, namely that essential genes are enriched for high expression.
+Furthermore, high expression leaves a clear signature in codon usage and base
+composition that a short script can measure. Any claim that a language model
+has learned something about essentiality has to clear that signature first.
 
 The question we ask is therefore not whether a frontier model works, which
 anyone with a sufficiently large machine can answer, but how much model is
-needed before the signal appears at all — and whether it ever exceeds what
-free sequence statistics already provide. This framing matters practically.
+needed before the signal appears at all as well as whether it ever exceeds what
+free sequence statistics already provide. That framing matters practically.
 The largest genome models require datacenter accelerators, and much of the
 genomics that would benefit from them happens on modest hardware. If a model
-small enough to run on a laptop retains most of the available signal, that is
-a useful result for those users. If no model of any size beats counting codons,
+small enough to run on a laptop retains most of the available signal, that is a
+useful result for those users. If no model of any size beats counting codons,
 that is a more useful result still.
 
-We compare four DNA language models spanning 438 thousand to 98 million
-parameters, drawn from two architectures with different tokenisation and
-context behaviour, against a classical sequence-feature baseline. All models
-are evaluated as frozen feature extractors with a shallow classifier, on
-identical cross-validation folds, with the majority-class rate reported beside
-every metric and an explicit control for the most likely confound. We then test
-whether anything learned transfers to a second organism without retraining.
+Therefore, we compare four DNA language models spanning 438 thousand to 98
+million parameters, drawn from two architectures with different tokenisation and
+context behaviour, against a classical sequence-feature baseline. On identical
+cross-validation folds, all models are evaluated as frozen feature extractors
+with a shallow classifier, and we report the majority-class rate beside every
+metric together with an explicit control for the most likely confound. We then
+test whether anything learned transfers to a second organism without retraining.
 
 ## 2. Methods
 
@@ -75,6 +75,10 @@ A single stratified 5-fold split (seed 0) was fixed once and reused by every rep
 
 ## 3. Results
 
+![](figures/fig1_scaling_and_transfer.png)
+
+**Figure 1. No language model beats a codon-counting baseline, and the smallest stop working entirely in a second organism.** (**A**) Matthews correlation coefficient against model size, for four DNA language models used as frozen feature extractors, with 95% intervals. The dashed line is the classical sequence-feature baseline (0.331, shaded 95% interval); the dotted line is a model that calls every gene non-essential. No language model clears the baseline at any size. (**B**) The same representations with gradient boosting, trained on *E. coli* and applied to *B. subtilis* without retraining. Every method degrades; HyenaDNA 438K falls to −0.019, indistinguishable from chance, while the classical features and the largest model retain about 60%.
+
 ### 3.1 Classical features set a strong floor
 
 Predicting the majority class for every gene gives 91.02% accuracy and MCC 0 by construction. The classical features reach MCC 0.331 (95% CI [+0.288, +0.372], AUROC 0.794) with gradient boosting and 0.269 with logistic regression.
@@ -97,7 +101,7 @@ In paired bootstrap comparisons against the strongest classical configuration, 7
 
 ### 3.3 Scaling is weak and not consistent in direction
 
-Across a 223-fold increase in parameters, MCC rose from 0.230 to 0.309 with gradient boosting but fell from 0.235 to 0.228 with logistic regression. The smallest model tested (438,144 parameters, 0.0346 s/gene on CPU) is within overlapping confidence intervals of the largest for the logistic-regression classifier. See `results/scaling_mcc_vs_params.png` and `scaling_mcc_vs_time.png`.
+Across a 223-fold increase in parameters, MCC rose from 0.230 to 0.309 with gradient boosting but fell from 0.235 to 0.228 with logistic regression. The smallest model tested (438,144 parameters, 0.0346 s/gene on CPU) is within overlapping confidence intervals of the largest for the logistic-regression classifier. Figure 1A shows this directly.
 
 ### 3.4 Leakage control: gene length
 
@@ -135,55 +139,61 @@ Across the four models tested, no DNA language model extracted essentiality
 signal beyond what gene length, base composition and codon statistics already
 provide. Seven of eight model-classifier combinations performed significantly
 worse than that baseline in paired comparisons on identical genes; the best
-merely drew level. The result should be stated with its scope attached: four
+merely drew level. The result should be stated with its scope attached — four
 models, two architectures, one training organism, frozen representations. It is
 not a scaling law, and architecture is not separable from scale here.
 
-The baseline's strength is not an accident, and it suggests why the comparison
-goes the way it does. Essential genes are enriched for high expression, and
-highly expressed genes have distinctive synonymous codon usage. The classical
-features measure that directly: the codon adaptation index and the effective
-number of codons are, in effect, hand-built expression proxies refined over
-decades. A pretrained language model must recover the same signal indirectly
-from a generic objective, and then survive compression into a single pooled
-vector. On a task whose best-known correlate is already a cheap summary
+Moreover, the baseline's strength is not an accident, and it suggests why the
+comparison goes the way it does. Essential genes are enriched for high
+expression, and highly expressed genes have distinctive synonymous codon usage.
+The classical features measure that directly. The codon adaptation index and
+the effective number of codons are, in effect, hand-built expression proxies
+refined over decades. A pretrained language model must recover the same signal
+indirectly from a generic objective, and then survive compression into a single
+pooled vector. On a task whose best-known correlate is already a cheap summary
 statistic, the hand-built feature has a real advantage.
 
-The transfer result sharpens this. Applied to *B. subtilis* without
-retraining, every representation degraded, but not equally: the two smallest
-models fell to chance, while the larger ones retained roughly the same
-proportion of their performance as the classical features did. Within a single
-organism the small models had looked respectable. They were, it appears,
-fitting *E. coli*'s particular composition rather than anything about
+The transfer result sharpens this. Applied to *B. subtilis* without retraining,
+every representation degraded, but not equally. More specifically, the two
+smallest models fell to chance with gradient boosting and kept only about 40%
+of their within-organism performance with logistic regression, while the larger
+ones retained roughly the same proportion as the classical features did. Within
+a single organism the small models had looked respectable. They were, it
+appears, fitting *E. coli*'s particular composition rather than anything about
 essentiality. That is a more interesting conclusion than a flat "scaling does
 not help", and it is the one place in this study where parameters bought
-something: not accuracy, but generality. A reader deciding whether to run a
+something — not accuracy, but generality. A reader deciding whether to run a
 small model on their own hardware should weigh that. Within the organism you
-have labels for, the small model is nearly as good; outside it, it is nothing.
+have labels for, the small model is nearly as good. Without labels it is much
+weaker.
 
-The classifier interacts with this in a way worth noting. For the HyenaDNA
-models, logistic regression transferred better than gradient boosting, the
-reverse of the within-organism ordering. The flexible model exploits
-organism-specific structure that does not survive the move. Evaluations that
-report only the best classifier per representation would miss this entirely.
+Of equal importance, the classifier interacts with this in a way worth noting.
+For the HyenaDNA models, logistic regression and gradient boosting were nearly
+tied within *E. coli*, but on transfer gradient boosting collapsed to chance
+while logistic regression retained about 40% of its performance. The flexible
+model exploits organism-specific structure that does not survive the move.
+Evaluations that report only the best classifier per representation would miss
+this entirely.
 
 Gene length deserves comment because it is the standard objection. Here it is
-not available as an explanation: length alone is no better than chance, and
-removing every length feature leaves the baseline unchanged. One model's
+not available as an explanation. Length alone carries almost no signal and
+removing every length feature leaves the baseline unchanged, but one model's
 embedding norms nevertheless track length closely, which says something about
-what that representation encodes but cannot account for its predictions. On a
-dataset where length did predict the label, the same correlation would be a
-serious confound, and the check is cheap enough that it should be routine.
+what that representation encodes. However, it cannot account for its
+predictions. On a dataset where length did predict the label, the same
+correlation would be a serious confound, and the check is cheap enough that it
+should be routine.
 
-What this study does not show is that these models contain no essentiality
-information. Frozen embeddings with a shallow classifier probe what is linearly
-and non-linearly accessible in the pretrained representation without further
-training; fine-tuning may well do better, and the question of how much better
-is the natural next experiment. Nor does it speak to tasks where context
-genuinely matters — regulatory prediction, operon structure, long-range
-interactions — where a model that reads kilobases has an advantage no codon
-count can replicate. The claim is narrower: for this task, at this scale, as
-frozen features, the expensive option did not beat the free one.
+Altogether, what this study does not show is that these models contain no
+essentiality information. Frozen embeddings with a shallow classifier probe
+what is linearly and non-linearly accessible in the pretrained representation
+without further training. Fine-tuning may well do better, and the question of
+how much better is the natural next experiment. Nor does it speak to tasks
+where context genuinely matters, such as regulatory prediction, operon
+structure and long-range interactions, where a model that reads kilobases has
+an advantage no codon count can replicate. The final claim, although narrower,
+is that for this task, at this scale, as frozen features, the expensive option
+did not beat the free one.
 
 ## 5. Limitations
 
@@ -200,7 +210,7 @@ frozen features, the expensive option did not beat the free one.
 All code is in this repository. `python run_all.py` reproduces every file in `results/` from a fresh clone. Sequence data is downloaded from NCBI (`CP009273.1`, `NC_000964.3`) and essentiality labels from the sources cited above; the Goodall supplementary tables are committed because their hosts block automated download.
 
 
-> **>>> BEFORE POSTING: make the repository public and put its URL here. <<<** This section promises code a reader can run. A private repository makes that promise false, and a dead link in a preprint is worse than no link.
+The repository is currently private. It will be made public, and its URL given here, when this manuscript is posted; in the meantime the code is available from the author on request.
 
 ## References
 
@@ -212,5 +222,6 @@ All code is in this repository. `python run_all.py` reproduces every file in `re
 6. Dalla-Torre H, Gonzalez L, Mendoza-Revilla J, Lopez Carranza N, Grzywaczewski AH, Oteri F, Dallago C, Trop E, de Almeida BP, Sirelkhatim H, Richard G, Skwark M, Beguir K, Lopez M, Pierrot T (2025) Nucleotide Transformer: building and evaluating robust foundation models for human genomics. *Nature Methods* 22(2):287-297. doi:10.1038/s41592-024-02523-z
 7. Sharp PM, Li W-H (1987) The codon Adaptation Index--a measure of directional synonymous codon usage bias, and its potential applications. *Nucleic Acids Research* 15(3):1281-1295. doi:10.1093/nar/15.3.1281
 8. Wright F (1990) The 'effective number of codons' used in a gene. *Gene* 87(1):23-29. doi:10.1016/0378-1119(90)90491-9
+9. Brixi G, Durrant MG, Ku J, et al. (2026) Genome modelling and design across all domains of life with Evo 2. *Nature* 652(8112):1349-1361. doi:10.1038/s41586-026-10176-5
 
 *Verified against Crossref and PubMed on 2026-10-11. Two points a copy-editor may query: the dash in reference 7's title is rendered `--` following PubMed, and Crossref's lowercase variant of that title disagrees with PubMed, Europe PMC and Semantic Scholar; reference 5's author order follows the NeurIPS proceedings, which differs from the arXiv preprint.*

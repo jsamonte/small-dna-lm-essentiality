@@ -104,9 +104,9 @@ def main():
 
     w("# How small can a DNA language model be and still predict gene essentiality?")
     w("")
-    w("*Draft manuscript skeleton. Methods and Results are generated from `results/` by")
-    w("`scripts/build_manuscript.py`; do not edit numbers here by hand. Introduction and")
-    w("Discussion are outlines for the author.*")
+    w("*Methods, Results and Limitations are generated from `results/` by")
+    w("`scripts/build_manuscript.py`; do not edit numbers here. Abstract, Introduction")
+    w("and Discussion are in `paper/sections/` and are the author's to write.*")
     w("")
     w("Independent researcher, Beaumont, TX")
     w("")
@@ -234,6 +234,15 @@ def main():
     # ----------------------------------------------------------------- results
     w("## 3. Results")
     w("")
+    # Figure and caption are both generated from results/, by
+    # scripts/make_figures.py, so the figure and the text cannot disagree.
+    figure = PAPER / "figures" / "fig1_scaling_and_transfer.png"
+    caption = RESULTS / "fig1_caption.md"
+    if figure.exists() and caption.exists():
+        w("![](figures/fig1_scaling_and_transfer.png)")
+        w("")
+        w(caption.read_text(encoding="utf-8").strip())
+        w("")
     w("### 3.1 Classical features set a strong floor")
     w("")
     w(f"Predicting the majority class for every gene gives "
@@ -277,8 +286,8 @@ def main():
           f"{lr[0]['mcc']:.3f} to {lr[-1]['mcc']:.3f} with logistic regression. The "
           f"smallest model tested ({gb[0]['params']:,} parameters, "
           f"{gb[0]['seconds_per_gene']} s/gene on CPU) is within overlapping confidence "
-          f"intervals of the largest for the logistic-regression classifier. See "
-          f"`results/scaling_mcc_vs_params.png` and `scaling_mcc_vs_time.png`.")
+          f"intervals of the largest for the logistic-regression classifier. "
+          f"Figure 1A shows this directly.")
         w("")
     w("### 3.4 Leakage control: gene length")
     w("")
@@ -368,10 +377,9 @@ def main():
     w("")
 
     w("")
-    w("> **>>> BEFORE POSTING: make the repository public and put its URL "
-      "here. <<<** This section promises code a reader can run. A private "
-      "repository makes that promise false, and a dead link in a preprint is "
-      "worse than no link.")
+    w("The repository is currently private. It will be made public, and its URL "
+      "given here, when this manuscript is posted; in the meantime the code is "
+      "available from the author on request.")
     w("")
     w("## References")
     w("")
@@ -407,6 +415,13 @@ def main():
       "Research* 15(3):1281-1295. doi:10.1093/nar/15.3.1281")
     w("8. Wright F (1990) The 'effective number of codons' used in a gene. *Gene* "
       "87(1):23-29. doi:10.1016/0378-1119(90)90491-9")
+    # Verified against Crossref on 2026-10-27. 62 authors; first three plus
+    # et al., as Nature style does. Title keeps the published British
+    # "modelling". Cited only to anchor the parameter range in the
+    # introduction; this model is not evaluated here.
+    w("9. Brixi G, Durrant MG, Ku J, et al. (2026) Genome modelling and design across "
+      "all domains of life with Evo 2. *Nature* 652(8112):1349-1361. "
+      "doi:10.1038/s41586-026-10176-5")
     w("")
     w("*Verified against Crossref and PubMed on 2026-10-11. Two points a copy-editor may "
       "query: the dash in reference 7's title is rendered `--` following PubMed, and "

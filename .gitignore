@@ -267,3 +267,11 @@ data/processed/bsub_genes.fasta
 # built by scripts/build_pdf.py
 paper/manuscript.pdf
 paper/_manuscript_render.html
+
+# Private working documents -- not for publication.
+# The reading guide contains candid self-assessment written for a
+# collaborator, and the email is unsent correspondence.
+paper/breeder_guide.md
+paper/reading_guide.md
+paper/email_to_adamala.md
+paper/*.docx
