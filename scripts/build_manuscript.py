@@ -108,6 +108,8 @@ def main():
     w("`scripts/build_manuscript.py`; do not edit numbers here. Abstract, Introduction")
     w("and Discussion are in `paper/sections/` and are the author's to write.*")
     w("")
+    w("Jared Samonte")
+    w("")
     w("Independent researcher, Beaumont, TX")
     w("")
 
@@ -200,10 +202,12 @@ def main():
     w("")
     w(f"Each gene is represented by the mean of the final hidden layer over all token "
       f"positions. Model revisions are pinned to specific commits, since all four execute "
-      f"code from their own repositories. HyenaDNA's character-level tokenizer gives a "
+      f"code from their own repositories. HyenaDNA (Nguyen et al., 2023) uses a "
+      f"character-level tokenizer, which gives it a "
       f"context of about 1 kb, which 36.3% of protein-coding genes exceed; such genes are "
       f"split into consecutive windows, embedded separately, and averaged weighted by "
-      f"token count. Nucleotide Transformer's 6-mer tokenizer reaches roughly 12 kb, which "
+      f"token count. The 6-mer tokenizer of Nucleotide Transformer (Dalla-Torre et al., "
+      f"2025) reaches roughly 12 kb, which "
       f"no gene exceeds, so no truncation occurs for those models. All inference ran on "
       f"CPU; embeddings are cached and verified to be deterministic.")
     w("")
@@ -212,8 +216,9 @@ def main():
     w("")
     w(f"The baseline uses {baseline['results']['all__gradient_boosting']['n_features']} "
       f"features: gene length and log length, GC content overall and at each codon "
-      f"position, the codon adaptation index against a reference set of ribosomal protein "
-      f"genes, the effective number of codons, and 1-, 2- and 3-mer frequencies.")
+      f"position, the codon adaptation index (Sharp and Li, 1987) against a reference set "
+      f"of ribosomal protein genes, the effective number of codons (Wright, 1990), and "
+      f"1-, 2- and 3-mer frequencies.")
     w("")
 
     w("### 2.4 Evaluation")
@@ -314,7 +319,10 @@ def main():
         w(f"Classifiers trained on all {general['train']['n']:,} *E. coli* genes were "
           f"applied without retraining to {t['n']:,} protein-coding genes of *Bacillus "
           f"subtilis* 168 ({t['essential']} essential, majority class "
-          f"{t['majority_class_fraction']:.2%}), with labels from SubtiWiki. Classical "
+          f"{t['majority_class_fraction']:.2%}), with labels from SubtiWiki (Pedreira et al., "
+          f"2022), whose per-gene essentiality field is curated from the published "
+          f"deletion-library work and whose counts agree with Koo et al. (2017). "
+          f"Classical "
           f"features were recomputed within *B. subtilis*, including an organism-specific "
           f"codon adaptation reference, since carrying *E. coli* codon weights across would "
           f"not be a transfer test.")
@@ -377,9 +385,9 @@ def main():
     w("")
 
     w("")
-    w("The repository is currently private. It will be made public, and its URL "
-      "given here, when this manuscript is posted; in the meantime the code is "
-      "available from the author on request.")
+    # Public as of 2026-10-31.
+    w("The repository is public at "
+      "https://github.com/jsamonte/small-dna-lm-essentiality.")
     w("")
     w("## References")
     w("")

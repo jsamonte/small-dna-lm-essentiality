@@ -7,7 +7,8 @@ and the comparison is to another model.
 Gene essentiality is a useful place to test it. Whether a bacterium can survive
 losing a gene is a coarse, binary, biologically central property. Also gene
 essentiality has been measured genome-wide in several organisms by transposon
-mutagenesis and systematic deletion, so labels exist in quantity and are not
+mutagenesis and systematic deletion (Baba et al., 2006; Goodall et al., 2018),
+so labels exist in quantity and are not
 derived from sequence. Gene essentiality is also a property with a well-known
 cheap predictor, namely that essential genes are enriched for high expression.
 Furthermore, high expression leaves a clear signature in codon usage and base

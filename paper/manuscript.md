@@ -4,6 +4,8 @@
 `scripts/build_manuscript.py`; do not edit numbers here. Abstract, Introduction
 and Discussion are in `paper/sections/` and are the author's to write.*
 
+Jared Samonte
+
 Independent researcher, Beaumont, TX
 
 ## Abstract
@@ -21,7 +23,8 @@ and the comparison is to another model.
 Gene essentiality is a useful place to test it. Whether a bacterium can survive
 losing a gene is a coarse, binary, biologically central property. Also gene
 essentiality has been measured genome-wide in several organisms by transposon
-mutagenesis and systematic deletion, so labels exist in quantity and are not
+mutagenesis and systematic deletion (Baba et al., 2006; Goodall et al., 2018),
+so labels exist in quantity and are not
 derived from sequence. Gene essentiality is also a property with a well-known
 cheap predictor, namely that essential genes are enriched for high expression.
 Furthermore, high expression leaves a clear signature in codon usage and base
@@ -63,11 +66,11 @@ Essentiality calls are from Goodall et al. (2018), Table S1, a transposon-direct
 | `InstaDeepAI/nucleotide-transformer-v2-50m-multi-species` | 55,904,972 | 512 | ~12 kb | 0.2304 |
 | `InstaDeepAI/nucleotide-transformer-v2-100m-multi-species` | 97,889,132 | 512 | ~12 kb | 0.4313 |
 
-Each gene is represented by the mean of the final hidden layer over all token positions. Model revisions are pinned to specific commits, since all four execute code from their own repositories. HyenaDNA's character-level tokenizer gives a context of about 1 kb, which 36.3% of protein-coding genes exceed; such genes are split into consecutive windows, embedded separately, and averaged weighted by token count. Nucleotide Transformer's 6-mer tokenizer reaches roughly 12 kb, which no gene exceeds, so no truncation occurs for those models. All inference ran on CPU; embeddings are cached and verified to be deterministic.
+Each gene is represented by the mean of the final hidden layer over all token positions. Model revisions are pinned to specific commits, since all four execute code from their own repositories. HyenaDNA (Nguyen et al., 2023) uses a character-level tokenizer, which gives it a context of about 1 kb, which 36.3% of protein-coding genes exceed; such genes are split into consecutive windows, embedded separately, and averaged weighted by token count. The 6-mer tokenizer of Nucleotide Transformer (Dalla-Torre et al., 2025) reaches roughly 12 kb, which no gene exceeds, so no truncation occurs for those models. All inference ran on CPU; embeddings are cached and verified to be deterministic.
 
 ### 2.3 Classical baseline
 
-The baseline uses 93 features: gene length and log length, GC content overall and at each codon position, the codon adaptation index against a reference set of ribosomal protein genes, the effective number of codons, and 1-, 2- and 3-mer frequencies.
+The baseline uses 93 features: gene length and log length, GC content overall and at each codon position, the codon adaptation index (Sharp and Li, 1987) against a reference set of ribosomal protein genes, the effective number of codons (Wright, 1990), and 1-, 2- and 3-mer frequencies.
 
 ### 2.4 Evaluation
 
@@ -118,7 +121,7 @@ This is a property of the representations worth reporting in its own right, but 
 
 ### 3.5 Transfer to a second organism
 
-Classifiers trained on all 3,929 *E. coli* genes were applied without retraining to 4,046 protein-coding genes of *Bacillus subtilis* 168 (255 essential, majority class 93.70%), with labels from SubtiWiki. Classical features were recomputed within *B. subtilis*, including an organism-specific codon adaptation reference, since carrying *E. coli* codon weights across would not be a transfer test.
+Classifiers trained on all 3,929 *E. coli* genes were applied without retraining to 4,046 protein-coding genes of *Bacillus subtilis* 168 (255 essential, majority class 93.70%), with labels from SubtiWiki (Pedreira et al., 2022), whose per-gene essentiality field is curated from the published deletion-library work and whose counts agree with Koo et al. (2017). Classical features were recomputed within *B. subtilis*, including an organism-specific codon adaptation reference, since carrying *E. coli* codon weights across would not be a transfer test.
 
 | Representation | Classifier | E. coli MCC | B. subtilis MCC | Drop |
 |---|---|---|---|---|
@@ -210,7 +213,7 @@ did not beat the free one.
 All code is in this repository. `python run_all.py` reproduces every file in `results/` from a fresh clone. Sequence data is downloaded from NCBI (`CP009273.1`, `NC_000964.3`) and essentiality labels from the sources cited above; the Goodall supplementary tables are committed because their hosts block automated download.
 
 
-The repository is currently private. It will be made public, and its URL given here, when this manuscript is posted; in the meantime the code is available from the author on request.
+The repository is public at https://github.com/jsamonte/small-dna-lm-essentiality.
 
 ## References
 
