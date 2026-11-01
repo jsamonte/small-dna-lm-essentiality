@@ -1,4 +1,4 @@
-# How small can a DNA language model be and still predict gene essentiality?
+# DNA language models up to 10^8 parameters do not beat codon statistics at predicting gene essentiality
 
 *Methods, Results and Limitations are generated from `results/` by
 `scripts/build_manuscript.py`; do not edit numbers here. Abstract, Introduction
@@ -10,7 +10,7 @@ Independent researcher, Beaumont, TX
 
 ## Abstract
 
-DNA language models are growing rapidly, but gene essentiality is a coarse property and it is unclear how much model is needed to predict it. We conclude that, across the four models tested, scaling to 10^8 parameters did not yield essentiality signal beyond cheap sequence statistics. We reached that conclusion by comparing four DNA language models spanning 438,144 to 97,889,132 parameters against a classical sequence-feature baseline on 3,929 protein-coding genes of *Escherichia coli* BW25113, using identical cross-validation folds throughout. The best language model reached MCC 0.309 (nt-v2-100m, gradient boosting), against 0.331 for classical features. In paired bootstrap comparisons on identical genes, 7 of 8 model-classifier combinations were significantly worse than the baseline and 0 were better. Furthermore, performance did not increase consistently with parameter count. Also, gene length, often suspected as a confound, carried almost no signal (MCC −0.010), although one model's embedding norms correlated strongly with it.
+DNA language models are growing rapidly, but gene essentiality is a coarse property and it is unclear how much model is needed to predict it. We conclude that, across the four models tested, scaling to 10^8 parameters did not yield essentiality signal beyond cheap sequence statistics. We reached that conclusion by comparing four DNA language models spanning 438,144 to 97,889,132 parameters against a classical sequence-feature baseline on 3,929 protein-coding genes of *Escherichia coli* BW25113, using identical cross-validation folds throughout. The best language model reached MCC 0.309 (nt-v2-100m, gradient boosting), against 0.331 for classical features. In paired bootstrap comparisons on identical genes, 7 of 8 model-classifier combinations were significantly worse than the baseline and 0 were better. Furthermore, with gradient boosting MCC rose monotonically with parameter count, 0.230 to 0.309, so the gap was still closing at the largest size tested, while logistic regression showed no such trend. On transfer to *Bacillus subtilis* without retraining, the classical baseline's advantage turned out to depend on recalibrating its codon reference inside the test organism; on equal footing the best model (0.190) and the best classical configuration (0.187) are indistinguishable. Gene length, the usual suspected confound, carried almost no signal (MCC −0.010).
 
 ## 1. Introduction
 
@@ -80,7 +80,7 @@ A single stratified 5-fold split (seed 0) was fixed once and reused by every rep
 
 ![](figures/fig1_scaling_and_transfer.png)
 
-**Figure 1. No language model beats a codon-counting baseline, and the smallest stop working entirely in a second organism.** (**A**) Matthews correlation coefficient against model size, for four DNA language models used as frozen feature extractors, with 95% intervals. The dashed line is the classical sequence-feature baseline (0.331, shaded 95% interval); the dotted line is a model that calls every gene non-essential. No language model clears the baseline at any size. (**B**) The same representations with gradient boosting, trained on *E. coli* and applied to *B. subtilis* without retraining. Every method degrades; HyenaDNA 438K falls to −0.019, indistinguishable from chance, while the classical features and the largest model retain about 60%.
+**Figure 1. No language model beats a codon-counting baseline within an organism, and across organisms the baseline's advantage depends on being recalibrated.** (**A**) Matthews correlation coefficient against model size, for four DNA language models used as frozen feature extractors, with 95% intervals. The dashed line is the classical sequence-feature baseline (0.331, shaded 95% interval); the dotted line is a model that calls every gene non-essential. Gradient boosting rises at every step with model size, but the largest model's interval still contains the baseline rather than clearing it. (**B**) The same representations with gradient boosting, trained on *E. coli* and applied to *B. subtilis* without retraining. “Classical, not recalibrated” is that same pipeline denied a *B. subtilis* codon reference, which puts it on the footing a frozen embedding is already on; it falls to −0.007, indistinguishable from chance, as does HyenaDNA 438K at −0.019, while NT v2 97.9M retains +0.190 and the recalibrated classical features +0.198.
 
 ### 3.1 Classical features set a strong floor
 
@@ -102,9 +102,13 @@ Predicting the majority class for every gene gives 91.02% accuracy and MCC 0 by 
 
 In paired bootstrap comparisons against the strongest classical configuration, 7 of 8 model-classifier combinations were significantly worse (95% interval entirely below zero) and 0 were significantly better. The best language model configuration, nt-v2-100m with gradient boosting, differed from the baseline by -0.022 MCC (95% CI [-0.067, +0.023]), that is, indistinguishable from it rather than better.
 
-### 3.3 Scaling is weak and not consistent in direction
+Two features of that comparison are worth stating rather than leaving to be noticed. First, the baseline is itself the better of two classical configurations, so the headline is a comparison of the best classical result against each language model result individually; against the weaker classical configuration (logistic regression, 0.269) several language models are not worse. The best-against-best comparison is the one quoted above and is the one we rely on. Second, 8 comparisons are made against a single baseline with no multiplicity correction. None is needed for the direction of the conclusion, since no correction can turn 0 significant wins into one, and a Bonferroni threshold of 0.05/8 would only reduce how many of the 7 losses are called significant.
 
-Across a 223-fold increase in parameters, MCC rose from 0.230 to 0.309 with gradient boosting but fell from 0.235 to 0.228 with logistic regression. The smallest model tested (438,144 parameters, 0.0346 s/gene on CPU) is within overlapping confidence intervals of the largest for the logistic-regression classifier. Figure 1A shows this directly.
+### 3.3 Scaling helps the stronger classifier, but not enough
+
+With gradient boosting the four models, in increasing size order, give MCC 0.230, 0.247, 0.271, 0.309. That is monotonic across a 223-fold increase in parameters, and it is the strongest evidence in this study that scale buys anything. With logistic regression the same four give 0.235, 0.256, 0.236, 0.228, which is flat to slightly decreasing.
+
+Two things stop this being a positive scaling result. The trend holds for one classifier of the two, and the largest model's interval still contains the baseline instead of clearing it, at 0.309 [+0.261, +0.358] against 0.331 for the classical features. Four points from two architectures cannot be extrapolated, and we do not claim a larger model would fail to clear the baseline. The supportable statement is narrower, that nothing tested here does, and that the gap was still closing at the largest size we could run. The smallest model (438,144 parameters, 0.0346 s/gene on CPU) sits within overlapping intervals of the largest under logistic regression. Figure 1A shows both trends.
 
 ### 3.4 Leakage control: gene length
 
@@ -123,10 +127,14 @@ This is a property of the representations worth reporting in its own right, but 
 
 Classifiers trained on all 3,929 *E. coli* genes were applied without retraining to 4,046 protein-coding genes of *Bacillus subtilis* 168 (255 essential, majority class 93.70%), with labels from SubtiWiki (Pedreira et al., 2022), whose per-gene essentiality field is curated from the published deletion-library work and whose counts agree with Koo et al. (2017). Classical features were recomputed within *B. subtilis*, including an organism-specific codon adaptation reference, since carrying *E. coli* codon weights across would not be a transfer test.
 
+That recomputation is correct, but it is also an organism-specific recalibration that a frozen embedding has no equivalent of, so the alternative is reported beside it. The row `classical_ecoli_cai` is the same trained classifier applied to *B. subtilis* features built with *E. coli* codon weights, which puts the classical pipeline on the same footing as the models.
+
 | Representation | Classifier | E. coli MCC | B. subtilis MCC | Drop |
 |---|---|---|---|---|
 | classical | logistic regression | 0.269 | 0.174 [+0.141, +0.209] | 0.0946 |
 | classical | gradient boosting | 0.3314 | 0.198 [+0.144, +0.251] | 0.1332 |
+| classical_ecoli_cai | logistic regression | 0.269 | 0.187 [+0.147, +0.230] | 0.0816 |
+| classical_ecoli_cai | gradient boosting | 0.3314 | -0.007 [-0.031, +0.024] | 0.3389 |
 | hyenadna-tiny | logistic regression | 0.2347 | 0.092 [+0.055, +0.131] | 0.1429 |
 | hyenadna-tiny | gradient boosting | 0.2298 | -0.019 [-0.040, +0.006] | 0.2491 |
 | hyenadna-tiny-d256 | logistic regression | 0.2561 | 0.103 [+0.066, +0.141] | 0.1528 |
@@ -135,6 +143,8 @@ Classifiers trained on all 3,929 *E. coli* genes were applied without retraining
 | nt-v2-50m | gradient boosting | 0.2705 | 0.144 [+0.091, +0.197] | 0.1269 |
 | nt-v2-100m | logistic regression | 0.228 | 0.119 [+0.079, +0.161] | 0.1088 |
 | nt-v2-100m | gradient boosting | 0.3094 | 0.190 [+0.120, +0.256] | 0.1192 |
+
+**The classical baseline's transfer depends on that recalibration, and only under gradient boosting.** Denied a *B. subtilis* codon reference, classical features with gradient boosting fall from 0.198 to -0.007 [-0.031, +0.024], an interval containing zero. The same features with logistic regression are unaffected, moving from 0.174 to 0.187. On the equal-footing comparison, where nothing is recalibrated in the test organism, the best language model result is nt-v2-100m with gradient boosting at 0.190 [+0.120, +0.256] and the best classical result is logistic regression at 0.187 [+0.147, +0.230]. Those intervals overlap substantially, so the conclusion of §3.2 survives the move between organisms: the expensive representation matches the cheap one and does not beat it.
 
 ## 4. Discussion
 
@@ -163,18 +173,34 @@ of their within-organism performance with logistic regression, while the larger
 ones retained roughly the same proportion as the classical features did. Within
 a single organism the small models had looked respectable. They were, it
 appears, fitting *E. coli*'s particular composition rather than anything about
-essentiality. That is a more interesting conclusion than a flat "scaling does
-not help", and it is the one place in this study where parameters bought
-something — not accuracy, but generality. A reader deciding whether to run a
+essentiality. However, that reading needs a control, and the control fails it
+in part. Denied a *B. subtilis* codon reference and paired with gradient
+boosting, the classical features do exactly the same thing, dropping from
+0.198 to −0.007. Fitting the training organism's composition is therefore a
+property of the combination rather than a failing peculiar to small models.
+What survives is narrower and still worth having, which is that the largest
+model reaches 0.190 on transfer with no organism-specific information of any
+kind, and no small model here came close to that. A reader deciding whether to run a
 small model on their own hardware should weigh that. Within the organism you
 have labels for, the small model is nearly as good. Without labels it is much
 weaker.
+
+One alternative explanation belongs here rather than in the list of
+limitations, because it bears directly on the claim just made. Nucleotide
+Transformer v2 is multi-species and very likely saw both genomes during
+pretraining. "The larger model generalises" and "the larger model has also
+memorised *B. subtilis*" predict the same table, and nothing in this study
+separates them. The transfer result should be read with that attached, and a
+clean test would need an organism absent from the pretraining corpus.
 
 Of equal importance, the classifier interacts with this in a way worth noting.
 For the HyenaDNA models, logistic regression and gradient boosting were nearly
 tied within *E. coli*, but on transfer gradient boosting collapsed to chance
 while logistic regression retained about 40% of its performance. The flexible
-model exploits organism-specific structure that does not survive the move.
+model exploits organism-specific structure that does not survive the move, and
+the cleanest demonstration is the classical features themselves. Under logistic
+regression they transfer at 0.187 with no recalibration at all; under gradient
+boosting the same features, given the same information, collapse to zero.
 Evaluations that report only the best classifier per representation would miss
 this entirely.
 
@@ -195,8 +221,8 @@ how much better is the natural next experiment. Nor does it speak to tasks
 where context genuinely matters, such as regulatory prediction, operon
 structure and long-range interactions, where a model that reads kilobases has
 an advantage no codon count can replicate. The final claim, although narrower,
-is that for this task, at this scale, as frozen features, the expensive option
-did not beat the free one.
+is that for this task, at this scale, as frozen features, in either organism,
+the expensive option did not beat the free one.
 
 ## 5. Limitations
 
@@ -214,6 +240,14 @@ All code is in this repository. `python run_all.py` reproduces every file in `re
 
 
 The repository is public at https://github.com/jsamonte/small-dna-lm-essentiality.
+
+## 7. Declarations
+
+**Funding.** This work received no funding.
+
+**Competing interests.** The author declares no competing interests.
+
+**Use of AI and AI-assisted technologies.** Anthropic's Claude was used throughout this work, under the author's direction, to write and debug the analysis code, to draft and edit prose, and to check the manuscript against the results files. Every numerical value in this paper is written by `scripts/build_manuscript.py` from the files in `results/`, which `python run_all.py` regenerates from the raw data, so no number here was produced by a language model. The author chose the question, the models and the baseline, verified the results and takes responsibility for the content.
 
 ## References
 

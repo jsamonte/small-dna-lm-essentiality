@@ -37,6 +37,7 @@ SHORT = {
 }
 ROWLABEL = {
     "classical": "classical features",
+    "classical_ecoli_cai": "classical, not recalibrated",
     "nt-v2-100m": "NT v2  97.9M",
     "nt-v2-50m": "NT v2  55.9M",
     "hyenadna-tiny-d256": "HyenaDNA  1.6M",
@@ -128,8 +129,10 @@ def main():
               bbox_to_anchor=(1.0, 0.0))
 
     # ---------------- Panel B: transfer to B. subtilis ----------------
-    rows = [r for r in gen if r["classifier"] == "gradient_boosting"]
-    order = ["classical", "nt-v2-100m", "nt-v2-50m", "hyenadna-tiny-d256", "hyenadna-tiny"]
+    rows = [r for r in gen if r["classifier"] == "gradient_boosting"
+            and r["representation"] in ROWLABEL]
+    order = ["classical", "classical_ecoli_cai", "nt-v2-100m", "nt-v2-50m",
+             "hyenadna-tiny-d256", "hyenadna-tiny"]
     rows.sort(key=lambda r: order.index(r["representation"]))
 
     ys = list(range(len(rows)))[::-1]
@@ -189,23 +192,34 @@ def main():
     print("wrote", OUT)
 
     # the caption, generated from the same numbers
-    worst = min(rows, key=lambda r: float(r["mcc"]))
-    worst_name = " ".join(ROWLABEL[worst["representation"]].split())
-    # Typographic minus on the value only. Doing this with .replace() on the
-    # caption would also eat the hyphens in words like "codon-counting".
-    worst_mcc = f"{float(worst['mcc']):+.3f}".replace("-", "−")
+    by = {r["representation"]: r for r in rows}
+    MINUS = "\u2212"
+
+    def mcc(rep):
+        return f"{float(by[rep]['mcc']):+.3f}".replace("-", MINUS)
+
+    gbs = sorted((r for r in scaling if r["classifier"] == "gradient_boosting"),
+                 key=lambda r: int(r["params"]))
+    rising = all(float(b["mcc"]) >= float(a["mcc"]) for a, b in zip(gbs, gbs[1:]))
     cap = (
-        f"**Figure 1. No language model beats a codon-counting baseline, and the "
-        f"smallest stop working entirely in a second organism.** (**A**) Matthews "
-        f"correlation coefficient against model size, for four DNA language models "
-        f"used as frozen feature extractors, with 95% intervals. The dashed line is "
-        f"the classical sequence-feature baseline ({base_mcc:.3f}, shaded 95% "
-        f"interval); the dotted line is a model that calls every gene non-essential. "
-        f"No language model clears the baseline at any size. (**B**) The same "
-        f"representations with gradient boosting, trained on *E. coli* and applied to "
-        f"*B. subtilis* without retraining. Every method degrades; "
-        f"{worst_name} falls to {worst_mcc}, indistinguishable from chance, "
-        f"while the classical features and the largest model retain about 60%."
+        f"**Figure 1. No language model beats a codon-counting baseline within "
+        f"an organism, and across organisms the baseline's advantage depends on "
+        f"being recalibrated.** (**A**) Matthews correlation coefficient against "
+        f"model size, for four DNA language models used as frozen feature "
+        f"extractors, with 95% intervals. The dashed line is the classical "
+        f"sequence-feature baseline ({base_mcc:.3f}, shaded 95% interval); the "
+        f"dotted line is a model that calls every gene non-essential. Gradient "
+        f"boosting {'rises at every step' if rising else 'does not rise monotonically'} "
+        f"with model size, but the largest model's interval still contains the "
+        f"baseline rather than clearing it. (**B**) The same representations with "
+        f"gradient boosting, trained on *E. coli* and applied to *B. subtilis* "
+        f"without retraining. \u201cClassical, not recalibrated\u201d is that same "
+        f"pipeline denied a *B. subtilis* codon reference, which puts it on the "
+        f"footing a frozen embedding is already on; it falls to "
+        f"{mcc('classical_ecoli_cai')}, indistinguishable from chance, as does "
+        f"HyenaDNA 438K at {mcc('hyenadna-tiny')}, while NT v2 97.9M retains "
+        f"{mcc('nt-v2-100m')} and the recalibrated classical features "
+        f"{mcc('classical')}."
     )
     (RESULTS / "fig1_caption.md").write_text(cap, encoding="utf-8")
     print("wrote", RESULTS / "fig1_caption.md")

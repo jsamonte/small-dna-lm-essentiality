@@ -48,6 +48,42 @@
       "mcc_drop": 0.1332
     },
     {
+      "mcc": 0.1874,
+      "auroc": 0.7228,
+      "average_precision": 0.2165,
+      "accuracy": 0.8542,
+      "essential_precision": 0.181,
+      "essential_recall": 0.3725,
+      "essential_f1": 0.2436,
+      "mcc_ci95": [
+        0.1472,
+        0.2303
+      ],
+      "representation": "classical_ecoli_cai",
+      "classifier": "logistic_regression",
+      "params": null,
+      "within_ecoli_mcc": 0.269,
+      "mcc_drop": 0.0816
+    },
+    {
+      "mcc": -0.0075,
+      "auroc": 0.5836,
+      "average_precision": 0.0839,
+      "accuracy": 0.9231,
+      "essential_precision": 0.0484,
+      "essential_recall": 0.0118,
+      "essential_f1": 0.0189,
+      "mcc_ci95": [
+        -0.031,
+        0.0237
+      ],
+      "representation": "classical_ecoli_cai",
+      "classifier": "gradient_boosting",
+      "params": null,
+      "within_ecoli_mcc": 0.3314,
+      "mcc_drop": 0.3389
+    },
+    {
       "mcc": 0.0918,
       "auroc": 0.637,
       "average_precision": 0.1243,

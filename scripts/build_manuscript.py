@@ -102,7 +102,8 @@ def main():
     L = []
     w = L.append
 
-    w("# How small can a DNA language model be and still predict gene essentiality?")
+    w("# DNA language models up to 10^8 parameters do not beat codon "
+      "statistics at predicting gene essentiality")
     w("")
     w("*Methods, Results and Limitations are generated from `results/` by")
     w("`scripts/build_manuscript.py`; do not edit numbers here. Abstract, Introduction")
@@ -280,20 +281,60 @@ def main():
           f"(95% CI {fmt_ci(paired.get(best_lm['model'] + '__' + best_lm['classifier'], {}).get('ci95'))}), "
           f"that is, indistinguishable from it rather than better.")
         w("")
-    w("### 3.3 Scaling is weak and not consistent in direction")
+        # Two objections a referee raises here, answered where they arise.
+        w(f"Two features of that comparison are worth stating rather than "
+          f"leaving to be noticed. First, the baseline is itself the better "
+          f"of two classical configurations, so the headline is a comparison "
+          f"of the best classical result against each language model result "
+          f"individually; against the weaker classical configuration "
+          f"(logistic regression, {baseline['results']['all__logistic_regression']['mcc']:.3f}) "
+          f"several language models are not worse. The best-against-best "
+          f"comparison is the one quoted above and is the one we rely on. "
+          f"Second, {len(paired)} comparisons are made against a single "
+          f"baseline with no multiplicity correction. None is needed for the "
+          f"direction of the conclusion, since no correction can turn "
+          f"{n_better} significant wins into one, and a Bonferroni threshold "
+          f"of 0.05/{len(paired)} would only reduce how many of the "
+          f"{n_worse} losses are called significant.")
+        w("")
+    w("### 3.3 Scaling helps the stronger classifier, but not enough")
     w("")
-    gb = sorted([r for r in rows if r["classifier"] == "gradient_boosting"], key=lambda r: r["params"])
-    lr = sorted([r for r in rows if r["classifier"] == "logistic_regression"], key=lambda r: r["params"])
+    gb = sorted([r for r in rows if r["classifier"] == "gradient_boosting"],
+                key=lambda r: r["params"])
+    lr = sorted([r for r in rows if r["classifier"] == "logistic_regression"],
+                key=lambda r: r["params"])
     if gb and lr:
         factor = gb[-1]["params"] / gb[0]["params"]
-        w(f"Across a {factor:.0f}-fold increase in parameters, MCC rose from "
-          f"{gb[0]['mcc']:.3f} to {gb[-1]['mcc']:.3f} with gradient boosting but fell from "
-          f"{lr[0]['mcc']:.3f} to {lr[-1]['mcc']:.3f} with logistic regression. The "
-          f"smallest model tested ({gb[0]['params']:,} parameters, "
-          f"{gb[0]['seconds_per_gene']} s/gene on CPU) is within overlapping confidence "
-          f"intervals of the largest for the logistic-regression classifier. "
-          f"Figure 1A shows this directly.")
+        monotonic = all(b["mcc"] >= a["mcc"] for a, b in zip(gb, gb[1:]))
+        gb_seq = ", ".join("{:.3f}".format(r["mcc"]) for r in gb)
+        lr_seq = ", ".join("{:.3f}".format(r["mcc"]) for r in lr)
+        # Reported plainly rather than folded into "scaling is weak": the
+        # gradient-boosting column rises at every step, and a reader who
+        # plots it will see that whether or not the text admits it.
+        w(f"With gradient boosting the four models, in increasing size order, "
+          f"give MCC {gb_seq}. That is "
+          f"{'monotonic' if monotonic else 'not monotonic'} across a "
+          f"{factor:.0f}-fold increase in parameters, and it is the strongest "
+          f"evidence in this study that scale buys anything. With logistic "
+          f"regression the same four give {lr_seq}, which is flat to slightly "
+          f"decreasing.")
         w("")
+        w(f"Two things stop this being a positive scaling result. The trend "
+          f"holds for one classifier of the two, and the largest model's "
+          f"interval still contains the baseline instead of clearing it, at "
+          f"{gb[-1]['mcc']:.3f} "
+          f"[{gb[-1]['mcc_ci95'][0]:+.3f}, {gb[-1]['mcc_ci95'][1]:+.3f}] "
+          f"against {best_bl['mcc']:.3f} for the classical features. Four "
+          f"points from two architectures cannot be extrapolated, and we do "
+          f"not claim a larger model would fail to clear the baseline. The "
+          f"supportable statement is narrower, that nothing tested here does, "
+          f"and that the gap was still closing at the largest size we could "
+          f"run. The smallest model ({gb[0]['params']:,} parameters, "
+          f"{gb[0]['seconds_per_gene']} s/gene on CPU) sits within overlapping "
+          f"intervals of the largest under logistic regression. Figure 1A "
+          f"shows both trends.")
+        w("")
+
     w("### 3.4 Leakage control: gene length")
     w("")
     w(f"Gene length alone gives MCC {len_only['mcc']:.3f}, and removing all length features "
@@ -327,12 +368,44 @@ def main():
           f"codon adaptation reference, since carrying *E. coli* codon weights across would "
           f"not be a transfer test.")
         w("")
+        w("That recomputation is correct, but it is also an "
+          "organism-specific recalibration that a frozen embedding has no "
+          "equivalent of, so the alternative is reported beside it. The row "
+          "`classical_ecoli_cai` is the same trained classifier applied to "
+          "*B. subtilis* features built with *E. coli* codon weights, which "
+          "puts the classical pipeline on the same footing as the models.")
+        w("")
         w("| Representation | Classifier | E. coli MCC | B. subtilis MCC | Drop |")
         w("|---|---|---|---|---|")
         for r in general["results"]:
             w(f"| {r['representation']} | {r['classifier'].replace('_', ' ')} | "
               f"{r['within_ecoli_mcc']} | {r['mcc']:.3f} {fmt_ci(r['mcc_ci95'])} | "
               f"{r['mcc_drop']} |")
+        w("")
+        gx = {(r["representation"], r["classifier"]): r for r in general["results"]}
+        cal_gb = gx[("classical", "gradient_boosting")]
+        raw_gb = gx[("classical_ecoli_cai", "gradient_boosting")]
+        cal_lr = gx[("classical", "logistic_regression")]
+        raw_lr = gx[("classical_ecoli_cai", "logistic_regression")]
+        best_lm_t = max((r for k, r in gx.items() if not k[0].startswith("classical")),
+                        key=lambda r: r["mcc"])
+        w(f"**The classical baseline's transfer depends on that "
+          f"recalibration, and only under gradient boosting.** Denied a "
+          f"*B. subtilis* codon reference, classical features with gradient "
+          f"boosting fall from {cal_gb['mcc']:.3f} to {raw_gb['mcc']:.3f} "
+          f"{fmt_ci(raw_gb['mcc_ci95'])}, an interval containing zero. The "
+          f"same features with logistic regression are unaffected, moving "
+          f"from {cal_lr['mcc']:.3f} to {raw_lr['mcc']:.3f}. On the "
+          f"equal-footing comparison, where nothing is recalibrated in the "
+          f"test organism, the best language model result is "
+          f"{best_lm_t['representation']} with "
+          f"{best_lm_t['classifier'].replace('_', ' ')} at "
+          f"{best_lm_t['mcc']:.3f} {fmt_ci(best_lm_t['mcc_ci95'])} and the "
+          f"best classical result is logistic regression at "
+          f"{raw_lr['mcc']:.3f} {fmt_ci(raw_lr['mcc_ci95'])}. Those "
+          f"intervals overlap substantially, so the conclusion of \u00a73.2 "
+          f"survives the move between organisms: the expensive "
+          f"representation matches the cheap one and does not beat it.")
         w("")
     else:
         w("*Pending: run `scripts/evaluate_generalization.py`.*")
@@ -389,6 +462,25 @@ def main():
     w("The repository is public at "
       "https://github.com/jsamonte/small-dna-lm-essentiality.")
     w("")
+    # ------------------------------------------------------ declarations
+    w("## 7. Declarations")
+    w("")
+    w("**Funding.** This work received no funding.")
+    w("")
+    w("**Competing interests.** The author declares no competing interests.")
+    w("")
+    w("**Use of AI and AI-assisted technologies.** "
+      "Anthropic's Claude was used throughout this work, under the "
+      "author's direction, to write and debug the analysis code, to draft "
+      "and edit prose, and to check the manuscript against the results "
+      "files. Every numerical value in this paper is written by "
+      "`scripts/build_manuscript.py` from the files in `results/`, which "
+      "`python run_all.py` regenerates from the raw data, so no number "
+      "here was produced by a language model. The author chose the "
+      "question, the models and the baseline, verified the results and "
+      "takes responsibility for the content.")
+    w("")
+
     w("## References")
     w("")
     # Verified against Crossref and PubMed on 2026-10-11. Do not edit from

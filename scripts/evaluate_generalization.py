@@ -95,12 +95,23 @@ def load_organism(prefix, label_source):
     return genes, seqs, labels, tags
 
 
-def classical_matrix(genes, seqs, tags, label):
-    """Features computed within the organism, including its own CAI reference."""
-    reference = [seqs[t] for t in tags if genes[t]["gene_name"].startswith(RIBOSOMAL)]
-    print(f"   {label}: CAI reference = {len(reference)} ribosomal genes")
-    weights = relative_adaptiveness(reference)
-    return np.array([features_for(seqs[t], weights) for t in tags], dtype=np.float64)
+def classical_matrix(genes, seqs, tags, label, weights=None):
+    """Features for one organism, with a CAI reference that is its own unless
+    one is passed in.
+
+    Recomputing the reference inside the test organism is the right default,
+    since codon usage is organism-specific and carrying E. coli weights over
+    would be a bug. It is also an organism-specific recalibration that the
+    frozen embeddings get no equivalent of, so the alternative is computed
+    too and reported beside it as `classical_ecoli_cai`."""
+    if weights is None:
+        reference = [seqs[t] for t in tags if genes[t]["gene_name"].startswith(RIBOSOMAL)]
+        print(f"   {label}: CAI reference = {len(reference)} ribosomal genes")
+        weights = relative_adaptiveness(reference)
+    else:
+        print(f"   {label}: CAI reference carried over from the training organism")
+    X = np.array([features_for(seqs[t], weights) for t in tags], dtype=np.float64)
+    return X, weights
 
 
 def main():
@@ -122,11 +133,15 @@ def main():
 
     representations = {}
     print("\nBuilding classical features")
-    representations["classical"] = (
-        classical_matrix(ec_genes, ec_seqs, ec_tags, "E. coli"),
-        classical_matrix(bs_genes, bs_seqs, bs_tags, "B. subtilis"),
-        None,
-    )
+    Xe_cl, ec_weights = classical_matrix(ec_genes, ec_seqs, ec_tags, "E. coli")
+    Xb_own, _ = classical_matrix(bs_genes, bs_seqs, bs_tags, "B. subtilis")
+    Xb_carried, _ = classical_matrix(bs_genes, bs_seqs, bs_tags, "B. subtilis",
+                                     weights=ec_weights)
+    representations["classical"] = (Xe_cl, Xb_own, None)
+    # The same trained classifier applied to B. subtilis features built with
+    # E. coli's codon weights, so the classical pipeline gets no more
+    # organism-specific information than a frozen embedding does.
+    representations["classical_ecoli_cai"] = (Xe_cl, Xb_carried, None)
     for key, spec in MODELS.items():
         ec_path = CACHE_DIR / f"{key}__{POOLING}__{STRATEGY}.npz"
         bs_path = CACHE_DIR / f"bsub_{key}__{POOLING}__{STRATEGY}.npz"
@@ -153,7 +168,10 @@ def main():
             m["classifier"] = clf_name
             m["params"] = params
             key = f"{rep}__{clf_name}"
-            source = within.get(key) or bl["results"].get(f"all__{clf_name}" if rep == "classical" else "")
+            base_rep = "classical" if rep.startswith("classical") else rep
+            source = (within.get(f"{base_rep}__{clf_name}")
+                      or bl["results"].get("all__" + clf_name
+                                           if base_rep == "classical" else ""))
             m["within_ecoli_mcc"] = source["mcc"] if source else None
             m["mcc_drop"] = (round(m["within_ecoli_mcc"] - m["mcc"], 4)
                              if m["within_ecoli_mcc"] is not None else None)

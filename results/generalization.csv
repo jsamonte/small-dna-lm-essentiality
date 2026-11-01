@@ -1,6 +1,8 @@
 representation,classifier,params,within_ecoli_mcc,mcc,mcc_lo,mcc_hi,mcc_drop,auroc,average_precision,accuracy,essential_precision,essential_recall,essential_f1
 classical,logistic_regression,,0.269,0.1744,0.1408,0.2091,0.0946,0.727,0.2299,0.7289,0.1307,0.5843,0.2136
 classical,gradient_boosting,,0.3314,0.1982,0.144,0.2509,0.1332,0.6629,0.2166,0.9145,0.2736,0.2157,0.2412
+classical_ecoli_cai,logistic_regression,,0.269,0.1874,0.1472,0.2303,0.0816,0.7228,0.2165,0.8542,0.181,0.3725,0.2436
+classical_ecoli_cai,gradient_boosting,,0.3314,-0.0075,-0.031,0.0237,0.3389,0.5836,0.0839,0.9231,0.0484,0.0118,0.0189
 hyenadna-tiny,logistic_regression,438144,0.2347,0.0918,0.0548,0.1306,0.1429,0.637,0.1243,0.8487,0.1242,0.2314,0.1616
 hyenadna-tiny,gradient_boosting,438144,0.2298,-0.0193,-0.0404,0.0064,0.2491,0.5112,0.0633,0.911,0.0354,0.0157,0.0217
 hyenadna-tiny-d256,logistic_regression,1645184,0.2561,0.1033,0.0663,0.141,0.1528,0.6573,0.1049,0.8085,0.1188,0.3176,0.1729
