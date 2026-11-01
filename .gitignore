@@ -274,4 +274,6 @@ paper/_manuscript_render.html
 paper/breeder_guide.md
 paper/reading_guide.md
 paper/email_to_adamala.md
-paper/*.docx
+# Word renderings are derived files, and the ones built from the private
+# documents above carry their contents. Match at any depth, not just paper/.
+*.docx
